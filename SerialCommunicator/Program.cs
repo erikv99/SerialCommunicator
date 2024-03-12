@@ -29,6 +29,7 @@ app.MapControllerRoute(
 
 await app.StartAsync();
 
-await Electron.WindowManager.CreateWindowAsync();
+// Temporarily disabled for development purposes.
+//await Electron.WindowManager.CreateWindowAsync();
 
 app.WaitForShutdown();

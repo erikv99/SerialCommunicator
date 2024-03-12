@@ -18,5 +18,23 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    font-family: 'Your Sans-serif Font', sans-serif;
+}
+
+.nav {
+    /* Styling for navigation */
+}
+
+.hero {
+    background-image: url('images/spaceBackground.webp');
+    background-size: cover;
+    text-align: center;
+    /* Additional hero styles */
+}
+
+.widgets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    /* Additional widget styles */
 }
