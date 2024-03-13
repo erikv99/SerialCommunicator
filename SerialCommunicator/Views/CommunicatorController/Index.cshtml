@@ -1,0 +1,35 @@
+﻿@model CommunicatorVM
+
+@{
+    ViewData["Title"] = "Communicator";
+}
+
+<div class="hero">
+    <image src="~/images/spaceBackground.webp"></image>
+    <div class="container command-overview">
+        
+        @foreach (var command in Model.RegisterdCommands)
+        {
+            <div class="container command-container">
+
+            </div>
+            //<button class="command" onclick="sendCommand('@command')">@command</button>
+        })
+            
+        @if (!Model.RegisterdCommands.Any())
+        {
+            // Show message saying no commands registerd    
+        }
+    </div>
+</div>
+
+<style>
+
+    .command-overview {
+    
+    }
+
+    .command-container {
+    }
+</style>
+

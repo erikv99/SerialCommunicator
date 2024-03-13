@@ -15,6 +15,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// TODO add favicon
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
