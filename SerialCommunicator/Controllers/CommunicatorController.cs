@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SerialCommunicator.Models;
 
 namespace SerialCommunicator.Controllers
 {
@@ -6,6 +7,8 @@ namespace SerialCommunicator.Controllers
     {
         public IActionResult Index()
         {
+            model = CommunicatorVM
+
             return View();
         }
     }
