@@ -35,3 +35,35 @@ await app.StartAsync();
 //await Electron.WindowManager.CreateWindowAsync();
 
 app.WaitForShutdown();
+
+TODO TODO TODO TODO 
+        Configuration = configuration;
+
+        List<Command> commandSequences;
+        try
+        {
+            string commandSequencesJson;
+            if (File.Exists("CommandSequences.local.json"))
+            {
+                commandSequencesJson = File.ReadAllText("CommandSequences.local.json");
+            }
+            else
+            {
+                commandSequencesJson = File.ReadAllText("CommandSequences.json");
+            }
+
+            commandSequences = JsonSerializer.Deserialize<List<Command>>(commandSequencesJson);
+        }
+        catch (FileNotFoundException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            // Handle file not found exception
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            // Handle JSON parsing exception
+        }
+    }
+
+    public IConfiguration Configuration { get; }

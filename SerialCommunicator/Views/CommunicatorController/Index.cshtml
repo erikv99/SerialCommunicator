@@ -4,8 +4,8 @@
     ViewData["Title"] = "Communicator";
 }
 
-<!-- @* // todo add font awesome icons. *@ -->
-<div class="hero">
+@* <!-- @* // todo add font awesome icons. *@ -->
+@* <div class="hero">
     <img src="~/images/spaceBackground.webp"/>
     <div class="container command-overview">
         
@@ -23,7 +23,7 @@
             //<button class="command" onclick="sendCommand('@command')">@command</button>
         })
             
-        @if (!Model.RegisterdCommands.Any())
+        @if (!Model.RegisteredCommands.Any())
         {
             <div class="container command-container">
                 >No commands registered            
@@ -31,15 +31,68 @@
             // Show message saying no commands registered
         }
     </div>
+</div> *@ 
+
+<div class="command-overview-container">
+    @foreach (var command in registeredCommands)
+    {
+        <div class="container command-container">
+            <table>
+                <tr>
+                    <td>
+                        @command.Name <button></button>
+                    </td>
+                </tr>
+            </table>
+            
+            <button class="command" asp-action="RunCommand" asp-controller="Communicator" asp-route-id="@command.Id">Send</button>
+        </div>
+    }
+</div>
+
+<div class="prompt-container">
+    <span class="prompt">C:\Users\Username></span>
+    <input type="text" class="input-field" id="userInput" autofocus />
 </div>
 
 <style>
-
-    .command-overview {
-    
+    body {
+        font-family: Consolas, monospace;
+        background-color: #0F0F0F;
+        color: #00FF00;
+        margin: 0;
+        padding: 0;
     }
 
-    .command-container {
+    .prompt-container {
+        padding: 10px;
+    }
+
+    .prompt {
+        color: #00FF00;
+    }
+
+    .input-field {
+        color: #00FF00;
+        background-color: #0F0F0F;
+        border: none;
+        outline: none;
+        font-family: Consolas, monospace;
     }
 </style>
 
+<script>
+
+    document.getElementById('userInput')
+        .addEventListener('keypress', (event) => {
+        
+        // 13 is the enter key
+        if (event.keyCode === 13) {
+
+            var userInput = document.getElementById('userInput').value;
+            console.log(userInput);
+            document.getElementById('userInput').value = '';
+        }
+    });
+        
+</script>

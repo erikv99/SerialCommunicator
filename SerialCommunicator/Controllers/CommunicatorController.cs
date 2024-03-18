@@ -7,9 +7,14 @@ namespace SerialCommunicator.Controllers
     {
         public IActionResult Index()
         {
-            model = CommunicatorVM
+            var model = new CommunicatorVM 
+            {
+                
+            };
 
             return View();
         }
+
+        
     }
 }

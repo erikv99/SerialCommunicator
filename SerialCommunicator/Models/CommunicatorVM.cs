@@ -2,6 +2,6 @@
 {
     public class CommunicatorVM
     {
-        public List<Command> RegisterdCommands { get; set; } = new List<Command>();
+        public List<Command> RegisteredCommands { get; set; } = new List<Command>();
     }
 }
