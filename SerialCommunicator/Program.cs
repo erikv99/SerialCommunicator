@@ -1,9 +1,16 @@
 using ElectronNET.API;
+using SerialCommunicator.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseElectron(args);
 builder.Services.AddControllersWithViews();
+
+builder.Configuration
+    .AddJsonFile("commands.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"commands.local.json", optional: true, reloadOnChange: true);
+
+builder.Services.Configure<CommandOptions>(builder.Configuration.GetSection("commands"));
 
 var app = builder.Build();
 
@@ -28,42 +35,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-
 await app.StartAsync();
 
 // Temporarily disabled for development purposes.
 //await Electron.WindowManager.CreateWindowAsync();
 
 app.WaitForShutdown();
-
-TODO TODO TODO TODO 
-        Configuration = configuration;
-
-        List<Command> commandSequences;
-        try
-        {
-            string commandSequencesJson;
-            if (File.Exists("CommandSequences.local.json"))
-            {
-                commandSequencesJson = File.ReadAllText("CommandSequences.local.json");
-            }
-            else
-            {
-                commandSequencesJson = File.ReadAllText("CommandSequences.json");
-            }
-
-            commandSequences = JsonSerializer.Deserialize<List<Command>>(commandSequencesJson);
-        }
-        catch (FileNotFoundException ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-            // Handle file not found exception
-        }
-        catch (JsonException ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-            // Handle JSON parsing exception
-        }
-    }
-
-    public IConfiguration Configuration { get; }

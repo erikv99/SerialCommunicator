@@ -4,7 +4,7 @@
     ViewData["Title"] = "Communicator";
 }
 
-@* <!-- @* // todo add font awesome icons. *@ -->
+@* <!-- @* // todo add font awesome icons. *@
 @* <div class="hero">
     <img src="~/images/spaceBackground.webp"/>
     <div class="container command-overview">
@@ -34,42 +34,42 @@
 </div> *@ 
 
 <div class="command-overview-container">
-    @foreach (var command in registeredCommands)
+    @foreach (var command in Model.Commands)
     {
         <div class="container command-container">
             <table>
                 <tr>
                     <td>
-                        @command.Name <button></button>
+                        @command.Name
+                    </td>
+                    <td>
+                         <button class="command" asp-action="RunCommand" asp-controller="Communicator" asp-route-id="@command.Id">Send</button>
                     </td>
                 </tr>
             </table>
-            
-            <button class="command" asp-action="RunCommand" asp-controller="Communicator" asp-route-id="@command.Id">Send</button>
         </div>
     }
 </div>
 
 <div class="prompt-container">
-    <span class="prompt">C:\Users\Username></span>
+    <span class="prompt">SerialCommunicator></span>
     <input type="text" class="input-field" id="userInput" autofocus />
 </div>
 
 <style>
     body {
         font-family: Consolas, monospace;
-        background-color: #0F0F0F;
-        color: #00FF00;
-        margin: 0;
-        padding: 0;
     }
 
     .prompt-container {
         padding: 10px;
+        background-color: #0F0F0F;
+        color: #00FF00;
     }
 
     .prompt {
         color: #00FF00;
+        background-color: #0F0F0F;
     }
 
     .input-field {

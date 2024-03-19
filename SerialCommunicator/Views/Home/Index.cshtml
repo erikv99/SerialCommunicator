@@ -3,10 +3,12 @@
 }
 
 <div class="hero">
-    <img src="~/images/spaceBackground.webp"/>
+    @* <img src="~/images/spaceBackground.webp"/> *@
     <div class="container">
         <h1 class="">SerialCommunicator</h1>
         <h3>Doing what a serial communicator does.</h3>
-        <button class="call-to-action" onclick="@Url.Action("Index", "Communicator")">Start</button>
+        <button class="call-to-action" asp-area="" asp-controller="Communicator" asp-action="Index">Start</button>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Communicator" asp-action="Index">Start2</a>
+        <a type="button" class="btn btn-info">Info</a>
     </div>
 </div>
