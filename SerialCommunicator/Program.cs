@@ -4,13 +4,16 @@ using SerialCommunicator.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseElectron(args);
-builder.Services.AddControllersWithViews();
+
+_configureServices(builder.Services);
 
 builder.Configuration
     .AddJsonFile("commands.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"commands.local.json", optional: true, reloadOnChange: true);
 
+// TODO: Make this more elegent and move to own method
 builder.Services.Configure<CommandOptions>(builder.Configuration.GetSection("commands"));
+builder.Services.Configure<SerialPortOptions>(builder.Configuration.GetSection("SerialPortOptions"));
 
 var app = builder.Build();
 
@@ -22,7 +25,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// TODO add favicon
+// (GLOBAL) TODO add favicon
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -41,3 +44,10 @@ await app.StartAsync();
 //await Electron.WindowManager.CreateWindowAsync();
 
 app.WaitForShutdown();
+
+// TODO: move to extension method
+void _configureServices(IServiceCollection services)
+{
+    services.AddControllersWithViews();
+    services.AddTransient<SerialCommunicatorService>();
+}

@@ -3,12 +3,58 @@
 }
 
 <div class="hero">
-    @* <img src="~/images/spaceBackground.webp"/> *@
-    <div class="container">
-        <h1 class="">SerialCommunicator</h1>
-        <h3>Doing what a serial communicator does.</h3>
-        <button class="call-to-action" asp-area="" asp-controller="Communicator" asp-action="Index">Start</button>
-        <a class="nav-link text-dark" asp-area="" asp-controller="Communicator" asp-action="Index">Start2</a>
-        <a type="button" class="btn btn-info">Info</a>
+    <div class="container text-center">
+        <h1>SerialCommunicator</h1>
+        <h2>Doing what a serial communicator does.</h2>
+        <a class="btn call-to-action-btn" asp-area="" asp-controller="Communicator" asp-action="Index">Start</a>
     </div>
 </div>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f4f4f8; 
+        color: #333;
+    }
+    .hero {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 90vh; 
+        text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); 
+    }
+    
+    .container h1 {
+        font-size: 3em;
+        margin-bottom: 0.3em;
+    }
+    
+    .container h2 {
+        font-size: 1.5em;
+        font-weight: lighter;
+        color: #555;
+        margin-bottom: 1em;
+    }
+    
+    .call-to-action-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.5);
+    }
+    .sticky-top {
+        position: sticky;
+        top: 0;
+        z-index: 1020;
+        background-color: #fff;
+        box-shadow: 0 2px 4px -1px rgba(0,0,0,.25);
+    }
+    .footer {
+        padding: 1em 0;
+        background: #333;
+        color: white;
+        text-align: center;
+        position: relative;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
