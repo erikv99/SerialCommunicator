@@ -43,7 +43,7 @@
                         @command.Name
                     </td>
                     <td>
-                         <button class="command" asp-action="RunCommand" asp-controller="Communicator" asp-route-id="@command.Id">Send</button>
+                         <button class="command">Send</button>
                     </td>
                 </tr>
             </table>
@@ -52,7 +52,7 @@
 </div>
 
 <div class="prompt-container">
-    <span class="prompt">SerialCommunicator></span>
+    <span class="prompt">@Model.PromptName</span>
     <input type="text" class="input-field" id="userInput" autofocus />
 </div>
 
@@ -79,9 +79,39 @@
         outline: none;
         font-family: Consolas, monospace;
     }
+    .prompt-message {
+        color: #00FF00;
+        background-color: #0F0F0F;
+        border-none;
+        outline: none;
+        ont-family: Consolas, monospace;
+    }
 </style>
 
 <script>
+
+    function addPromptMessage(message) {
+        var capitalizedMessage = message.charAt(0).toUpperCase() + message.slice(1);
+        $('.prompt-container').append('<div class="prompt-message">' + @Model.PromptName + "> " +  capitalizedMessage + '</div>');
+    }
+
+    function sendCommand(commandId) { 
+        
+        $.ajax({
+
+            type: "POST",
+            url: "/Communicator/SendCommand",
+            data: { id: commandId },
+            
+            success: function (response) {
+                console.log(response);
+            },
+            
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
 
     document.getElementById('userInput')
         .addEventListener('keypress', (event) => {
