@@ -33,38 +33,32 @@
     </div>
 </div> *@ 
 
-<div class="command-overview-container">
-    @foreach (var command in Model.Commands)
-    {
-        <div class="container command-container">
-            <table>
-                <tr>
-                    <td>
-                        @command.Name
-                    </td>
-                    <td>
-                         <button class="command">Send</button>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    }
+<div class="main-container">
+    <div class="command-overview-container c-container">
+        @foreach (var command in Model.Commands)
+        {
+            <div class="container command-container">
+                <table class="width-100">
+                    <tr>
+                        <td>
+                            @command.Name
+                            <button class="command">Send</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+    </div>
+
+    <div class="prompt-container c-container">
+        <span class="prompt">@Model.PromptName> Awaiting instructions...</span>
+    </div>
 </div>
 
-<div class="prompt-container">
-    <span class="prompt">@Model.PromptName</span>
-    <input type="text" class="input-field" id="userInput" autofocus />
-</div>
 
 <style>
     body {
         font-family: Consolas, monospace;
-    }
-
-    .prompt-container {
-        padding: 10px;
-        background-color: #0F0F0F;
-        color: #00FF00;
     }
 
     .prompt {
@@ -79,12 +73,74 @@
         outline: none;
         font-family: Consolas, monospace;
     }
+
     .prompt-message {
         color: #00FF00;
         background-color: #0F0F0F;
         border-none;
         outline: none;
-        ont-family: Consolas, monospace;
+        font-family: Consolas, monospace;
+    }
+
+    .main-container {
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-start;
+        gap: 30px;
+        padding: 20px;
+    }
+
+    .command-overview-container {
+        flex: 1;
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 15px;
+        max-width: 45%;
+    }
+
+    .command-container {
+        margin-bottom: 10px;
+        border: 2px solid lightgoldenrodyellow;
+        border-radius: 6px;
+    }
+
+    .c-container {
+        border: 5px ridge gray;
+        padding: 10px;
+        background-color: #0F0F0F;
+        color: #00FF00;
+    }
+
+    .width-100 {
+        width: 100%;
+    }
+
+    .command {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        float: right;
+    }
+
+    .command:hover {
+        background-color: #0056b3;
+    }
+
+    .prompt-container {
+        flex: 1;
+        display: flex;
+        gap: 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 15px;
+        max-width: 45%;
+        min-height: 25em;
+
     }
 </style>
 
