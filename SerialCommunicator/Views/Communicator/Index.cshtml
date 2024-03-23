@@ -4,34 +4,7 @@
     ViewData["Title"] = "Communicator";
 }
 
-@* <!-- @* // todo add font awesome icons. *@
-@* <div class="hero">
-    <img src="~/images/spaceBackground.webp"/>
-    <div class="container command-overview">
-        
-        @foreach (var command in Model.RegisteredCommands)
-        {
-            <div class="container command-container">
-                <table>
-                    <tr>
-                        <td>
-                            @command.Name <button>Send</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            //<button class="command" onclick="sendCommand('@command')">@command</button>
-        })
-            
-        @if (!Model.RegisteredCommands.Any())
-        {
-            <div class="container command-container">
-                >No commands registered            
-            </div>
-            // Show message saying no commands registered
-        }
-    </div>
-</div> *@ 
+@* <!-- @* // todo add font awesome icons. *@ 
 
 <div class="main-container">
     <div class="command-overview-container c-container">
