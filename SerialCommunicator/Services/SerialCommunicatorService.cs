@@ -22,6 +22,7 @@ public class SerialCommunicatorService
     /// <returns>True if the command was sent successfully; otherwise, false.</returns>
     public bool SendCommand(Command command)
     {
+        _logger.LogInformation($"Attempting to send the '{command.Name}' command.");
         SerialPort? port = null;
         var result = false;
 

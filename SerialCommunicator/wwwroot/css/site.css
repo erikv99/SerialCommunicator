@@ -22,15 +22,20 @@ body {
     font-family: 'Your Sans-serif Font', sans-serif;
 }
 
-.nav {
-    /* Styling for navigation */
-}
-
 .hero {
     background-image: url('images/spaceBackground.webp');
     background-size: cover;
     text-align: center;
     /* Additional hero styles */
+}
+
+.nav-item {
+    border: 2px solid grey;
+    border-radius: 12px;
+    color: #FFFFFF;
+    border: 1px solid #0056b3;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .widgets {
