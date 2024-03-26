@@ -13,7 +13,7 @@
                     <tr>
                         <td>
                             @command.Name
-                            <button class="command">
+                            <button class="command" onclick="sendCommand('@command.Id');">
                                 Send <i class="fa-solid fa-paper-plane"></i>
                             </button>
                         </td>
@@ -23,8 +23,10 @@
         }
     </div>
 
-    <div class="prompt-container c-container">
+    <div class="c-container p-container">
         <span class="prompt">@Model.PromptName> Awaiting instructions...</span>
+
+        </table>
     </div>
 </div>
 
@@ -33,6 +35,8 @@
     .prompt {
         color: #00FF00;
         background-color: #0F0F0F;
+        width: 100%;
+        display: block;
     }
 
     .input-field {
@@ -73,6 +77,7 @@
         padding: 10px;
         background-color: #0F0F0F;
         color: #00FF00;
+        width: 50%; 
     }
 
     .width-100 {
@@ -83,16 +88,17 @@
         background-color: #0056b3;
     }
 
+    .p-container {
+        min-height: 45em;
+    }
+
     .prompt-container {
         flex: 1;
         display: flex;
         gap: 10px;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        padding: 15px;
-        max-width: 45%;
         min-height: 25em;
-
     }
 
     body {
@@ -131,13 +137,10 @@
 
 <script>
 
-    function addPromptMessage(message) {
-        var capitalizedMessage = message.charAt(0).toUpperCase() + message.slice(1);
-        $('.prompt-container').append('<div class="prompt-message">' + @Model.PromptName + "> " +  capitalizedMessage + '</div>');
-    }
-
     function sendCommand(commandId) { 
         
+        addPromptMessage("Sending command with id #" + commandId + "...");
+
         $.ajax({
 
             type: "POST",
@@ -146,11 +149,20 @@
             
             success: function (response) {
                 console.log(response);
+                addPromptMessage("Command with id #" + commandId + " was sent successfully.");
+                console.log("Success");
             },
             
             error: function (response) {
                 console.log(response);
+                addPromptMessage("Failed to send command with id #" + commandId + ".");
             }
         });
+    }
+
+    function addPromptMessage(message) {
+        var capitalizedMessage = message.charAt(0).toUpperCase() + message.slice(1);
+        var promptMessage = "@Model.PromptName" + "> " +  capitalizedMessage;
+        $('.p-container').append('<span class="prompt"> ' + promptMessage + '</span>');
     }
 </script>

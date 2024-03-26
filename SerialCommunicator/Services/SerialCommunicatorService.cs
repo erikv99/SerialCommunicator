@@ -1,4 +1,5 @@
 using System.IO.Ports;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SerialCommunicator.Models;
 
@@ -20,6 +21,7 @@ public class SerialCommunicatorService
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns>True if the command was sent successfully; otherwise, false.</returns>
+    [HttpPost]
     public bool SendCommand(Command command)
     {
         _logger.LogInformation($"Attempting to send the '{command.Name}' command.");

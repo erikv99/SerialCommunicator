@@ -59,7 +59,8 @@ public class CommunicatorController : Controller
     {
         var model = new CommunicatorVM 
         {
-            Commands = _commands
+            Commands = _commands,
+            PromptName = "SerialCommunicator"
         };
 
         return View(model);
