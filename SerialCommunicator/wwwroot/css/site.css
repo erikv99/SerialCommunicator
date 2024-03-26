@@ -23,10 +23,8 @@ body {
 }
 
 .hero {
-    background-image: url('images/spaceBackground.webp');
     background-size: cover;
     text-align: center;
-    /* Additional hero styles */
 }
 
 .nav-item {
@@ -41,5 +39,4 @@ body {
 .widgets {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    /* Additional widget styles */
 }
