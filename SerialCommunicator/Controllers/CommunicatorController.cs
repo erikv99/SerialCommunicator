@@ -66,7 +66,7 @@ public class CommunicatorController : Controller
     }
 
     [HttpPost]
-    public IActionResult RunCommand(int id) 
+    public IActionResult SendCommand(int id) 
     {
         var command = _commands.FirstOrDefault(c => c.Id == id);
 

@@ -214,16 +214,17 @@
         color: #00FF00;
         width: 50%; 
         border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1)
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        min-height: 45em;
+        max-height: 0vh; 
+        overflow-y: auto;
+        @* TODO: No clue why this works, but it does, investigate later. *@
     }
 
     .width-100 {
         width: 100%;
     }
 
-    .p-container {
-        min-height: 45em;
-    }
 
     .prompt-container {
         flex: 1;
