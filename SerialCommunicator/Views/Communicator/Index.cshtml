@@ -5,135 +5,46 @@
 }
 
 <div class="main-container">
+
     <div class="command-overview-container c-container">
         @foreach (var command in Model.Commands)
         {
-            <div class="container command-container">
-                <table class="width-100">
-                    <tr>
-                        <td>
-                            @command.Name
-                            <button class="command" onclick="sendCommand('@command.Id');">
-                                Send <i class="fa-solid fa-paper-plane"></i>
-                            </button>
-                        </td>
-                    </tr>
-                </table>
+            <div class="container-fluid command-container">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="command-row command-name">@command.Name</div>
+                        <div class="command-row command-description">@command.Description</div>
+                        <div class="command-row command-payload">@command.GetPayloadAsString()</div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <button class="mutate-btn" onclick="editCommand('@command.Id');">
+                                        <i class="fa-solid fa-gear"></i>
+                                    </button>
+                                    <button class="mutate-btn" onclick="deleteCommand('@command.Id');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button class="command-btn" onclick="sendCommand('@command.Id');">
+                                        Send <i class="fa-solid fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         }
     </div>
 
     <div class="c-container p-container">
         <span class="prompt">@Model.PromptName> Awaiting instructions...</span>
-
         </table>
     </div>
 </div>
-
-
-<style>
-    .prompt {
-        color: #00FF00;
-        background-color: #0F0F0F;
-        width: 100%;
-        display: block;
-    }
-
-    .input-field {
-        color: #00FF00;
-        background-color: #0F0F0F;
-        border: none;
-        outline: none;
-        font-family: Consolas, monospace;
-    }
-
-    .prompt-message {
-        color: #00FF00;
-        background-color: #0F0F0F;
-        border-none;
-        outline: none;
-        font-family: Consolas, monospace;
-    }
-
-    .main-container {
-        display: flex;
-        justify-content: space-around;
-        align-items: flex-start;
-        gap: 30px;
-        padding: 20px;
-    }
-
-    .command-overview-container {
-        flex: 1;
-        background-color: #f0f0f0;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        padding: 15px;
-        max-width: 45%;
-    }
-
-    .c-container {
-        border: 5px ridge gray;
-        padding: 10px;
-        background-color: #0F0F0F;
-        color: #00FF00;
-        width: 50%; 
-    }
-
-    .width-100 {
-        width: 100%;
-    }
-
-    .command:hover {
-        background-color: #0056b3;
-    }
-
-    .p-container {
-        min-height: 45em;
-    }
-
-    .prompt-container {
-        flex: 1;
-        display: flex;
-        gap: 10px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        min-height: 25em;
-    }
-
-    body {
-    font-family: 'Consolas', monospace;
-    font-size: 1em;
-    background-color: #1C1C1C; 
-    color: #FFFFFF;
-    }
-
-    .command {
-        background: linear-gradient(to right, #0088CC, #0044CC); 
-        color: #FFFFFF;
-        border: 1px solid #0056b3;     
-        padding: 12px 18px; 
-        border-radius: 5px; 
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
-        float: right;
-    }
-
-    .command:hover {
-        background: linear-gradient(to right, #0056b3, #002d70); 
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
-    }
-
-
-    .command-container {
-        margin-bottom: 10px;
-        border-radius: 6px;
-        padding: 0.75em;
-        background-color: #2C2C2C; 
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
-    }
-</style>
 
 <script>
 
@@ -166,3 +77,132 @@
         $('.p-container').append('<span class="prompt"> ' + promptMessage + '</span>');
     }
 </script>
+
+<style>
+
+    .command-name {
+        color: #00BCD4;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .command-row {
+        width: 90%;
+        display: block;
+    }
+
+    .command-description {
+        color: #00BCD4;
+        line-height: 1.6;
+        margin-top: 10px;
+        margin-bottom: 1.1em;
+        font-size: 0.7em;
+    }
+
+    .command-payload {
+        font-family: 'Courier New', monospace;
+        margin-top: 4px;
+        color: #8990FF;
+        font-size: 0.7em;
+    }
+
+    .command-payload:hover {
+        color: #81C784; 
+        cursor: pointer;
+    }
+
+    .command-btn {
+        background: linear-gradient(to right, #0088CC, #0044CC);
+        color: #FFFFFF;
+        border: none;
+        padding: 8px 10px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        width: 7em;
+        height: 2.5em;
+    }
+
+    .mutate-btn {
+        padding: 2px;
+    }
+
+    .command:hover {
+        background: linear-gradient(to right, #0056b3, #002d70); 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+        background-color: #0056b3;
+    }
+
+    .command-container {
+        margin-bottom: 10px;
+        border-radius: 6px;
+        padding: 0.75em;
+        background-color: #2C2C2C; 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+    }
+
+    .prompt {
+        color: #00FF00;
+        background-color: #0F0F0F;
+        width: 100%;
+        display: block;
+    }
+
+    .prompt-message {
+        color: #00FF00;
+        background-color: #0F0F0F;
+        border: none;
+        outline: none;
+        font-family: Consolas, monospace;
+    }
+
+    .main-container {
+        display: flex;
+        justify-content: space-around;
+        gap: 30px;
+        padding: 20px;
+    }
+
+    .command-overview-container {
+        flex: 1;
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 15px;
+        max-width: 45%;
+    }
+
+    .c-container {
+        border: 5px ridge gray;
+        padding: 10px;
+        background-color: #0F0F0F;
+        color: #00FF00;
+        width: 50%; 
+    }
+
+    .width-100 {
+        width: 100%;
+    }
+
+    .p-container {
+        min-height: 45em;
+    }
+
+    .prompt-container {
+        flex: 1;
+        display: flex;
+        gap: 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        min-height: 25em;
+    }
+
+    body {
+        font-family: 'Consolas', monospace;
+        font-size: 1em;
+        background-color: #1C1C1C; 
+        color: #FFFFFF;
+    }
+
+
+</style>
