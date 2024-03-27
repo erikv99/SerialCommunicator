@@ -7,32 +7,29 @@
 <div class="main-container">
 
     <div class="command-overview-container c-container">
+
         @foreach (var command in Model.Commands)
         {
             <div class="container-fluid command-container">
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-md-8">
                         <div class="command-row command-name">@command.Name</div>
                         <div class="command-row command-description">@command.Description</div>
                         <div class="command-row command-payload">@command.GetPayloadAsString()</div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="col-md-6">
-                                    <button class="mutate-btn" onclick="editCommand('@command.Id');">
-                                        <i class="fa-solid fa-gear"></i>
-                                    </button>
-                                    <button class="mutate-btn" onclick="deleteCommand('@command.Id');">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                                <div class="col-md-6">
-                                    <button class="command-btn" onclick="sendCommand('@command.Id');">
-                                        Send <i class="fa-solid fa-paper-plane"></i>
-                                    </button>
-                                </div>
-                            </div>
+                    
+                    <div class="col-md-4 btn-section">
+                        
+                        <div class="row col-md-12 mutate-btn-section">
+                            <button class="mutate-btn" onclick="editCommand('@command.Id');">
+                                <i class="fa-solid fa-gear"></i>
+                            </button>
+                            <button class="mutate-btn" onclick="deleteCommand('@command.Id');">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                                <button class="mutate-btn" style="width: 47%;" onclick="sendCommand('@command.Id');">
+                                Send <i class="fa-solid fa-paper-plane"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -47,6 +44,14 @@
 </div>
 
 <script>
+
+    function editCommand(commandId) {
+        addPromptMessage("This function is not yet implemented.");
+    }
+
+    function deleteCommand(commandId) {
+        addPromptMessage("This function is not yet implemented.");
+    }
 
     function sendCommand(commandId) { 
         
@@ -80,10 +85,27 @@
 
 <style>
 
+    .mutate-btn-section {
+        display: block;
+        text-align: end;
+        margin-top: -0.3em;
+    }
+
+    .send-btn-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+
+    .btn-section {
+        display: grid;
+        padding-right: 0px;
+    }
+
     .command-name {
         color: #00BCD4;
         font-weight: bold;
-        margin-bottom: 10px;
+        margin-bottom: 1.5em;
     }
     
     .command-row {
@@ -111,7 +133,7 @@
         cursor: pointer;
     }
 
-    .command-btn {
+    .send-btn {
         background: linear-gradient(to right, #0088CC, #0044CC);
         color: #FFFFFF;
         border: none;
@@ -119,18 +141,30 @@
         border-radius: 5px;
         transition: all 0.3s ease;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        width: 7em;
+        width: 70%;
         height: 2.5em;
+        text-align: center;
+        position: relative;
+        right: -2.5em;
+        bottom: -0.3em;
+        min-width: 65px;
     }
 
-    .mutate-btn {
-        padding: 2px;
-    }
-
-    .command:hover {
+    .send-btn:hover {
         background: linear-gradient(to right, #0056b3, #002d70); 
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
         background-color: #0056b3;
+    }
+    
+    .mutate-btn {
+        padding: 4px 8px;
+        width: 2.2em;
+        background: linear-gradient(to right, #08C, #6A3E06);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
     .command-container {
@@ -146,6 +180,7 @@
         background-color: #0F0F0F;
         width: 100%;
         display: block;
+        font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
     }
 
     .prompt-message {
@@ -178,6 +213,8 @@
         background-color: #0F0F0F;
         color: #00FF00;
         width: 50%; 
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1)
     }
 
     .width-100 {
@@ -203,6 +240,4 @@
         background-color: #1C1C1C; 
         color: #FFFFFF;
     }
-
-
 </style>
