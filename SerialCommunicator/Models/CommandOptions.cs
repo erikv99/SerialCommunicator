@@ -2,5 +2,5 @@
 
 public class CommandOptions
 {
-    public List<Command>? Commands { get; set; }
+    public required List<Command> Commands { get; set; }
 }
