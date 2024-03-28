@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SerialCommunicator.Models;
+using SerialCommunicator.Services;
 
 namespace SerialCommunicator.Controllers;
 
@@ -8,58 +9,32 @@ public class CommunicatorController : Controller
 {
     private readonly List<Command> _commands;
     private readonly SerialCommunicatorService _serialCommunicatorService;
+    private readonly RemoteKillSwitchService _killSwitchService;
 
     public CommunicatorController(
         IOptions<CommandOptions> commandSettings,
-        SerialCommunicatorService serialCommunicatorService)
+        SerialCommunicatorService serialCommunicatorService,
+        RemoteKillSwitchService killSwitchService)
     {
-        _commands = commandSettings.Value?.Commands ?? _createMockCommands();// new List<Command>();
+        _commands = commandSettings.Value?.Commands ?? new List<Command>();
+        _killSwitchService = killSwitchService;
         _serialCommunicatorService = serialCommunicatorService;
     }
 
-    private List<Command> _createMockCommands()
+    public async Task<IActionResult> Index()
     {
-        return new List<Command>
-        {
-            new Command
-            {
-                Id = 1,
-                Name = "Command 1",
-                Description = "This command initiates the first nothing sequence in the system. It's primarily used to set up nothing and prepare the system for absolutely nothing.",
-                Payload =
-                [
-                    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
-                ]
-            },
-            new Command
-            {
-                Id = 2,
-                Name = "Command 2",
-                Description = "Description for Command 2",
-                Payload =
-                [
-                    0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10
-                ]
-            },
-            new Command
-            {
-                Id = 3,
-                Name = "Command 3",
-                Description = "Description for Command 3",
-                Payload =
-                [
-                    0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18
-                ]
-            }
-        };
-    }
+        var isKillSwitchActive = await _killSwitchService.IsKillSwitchActive();
 
-    public IActionResult Index()
-    {
-        var model = new CommunicatorVM 
+        if (isKillSwitchActive)
         {
+            _commands.Clear();
+        }
+
+        var model = new CommunicatorVM
+        {
+            IsKillSwitchActive = isKillSwitchActive,
             Commands = _commands,
-            PromptName = "SerialCommunicator"
+            PromptName = "SerialCommunicator",
         };
 
         return View(model);

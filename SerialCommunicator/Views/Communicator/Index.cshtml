@@ -8,6 +8,18 @@
 
     <div class="command-overview-container c-container">
 
+        @if (Model.IsKillSwitchActive)
+        {
+            <div class="container-fluid command-container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="command-row command-name">Kill Switch</div>
+                        <div class="command-row command-description">The kill switch is currently active. All commands are disabled.</div>
+                    </div>
+                </div>
+            </div>
+        }
+
         @foreach (var command in Model.Commands)
         {
             <div class="container-fluid command-container">
@@ -27,7 +39,7 @@
                             <button class="mutate-btn" onclick="deleteCommand('@command.Id');">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
-                                <button class="mutate-btn" style="width: 47%;" onclick="sendCommand('@command.Id');">
+                                <button class="mutate-btn" style="width: 5em;" onclick="sendCommand('@command.Id');">
                                 Send <i class="fa-solid fa-paper-plane"></i>
                             </button>
                         </div>
@@ -84,9 +96,8 @@
 </script>
 
 <style>
-
     .mutate-btn-section {
-        display: block;
+        display: block ruby;
         text-align: end;
         margin-top: -0.3em;
     }

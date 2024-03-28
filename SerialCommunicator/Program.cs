@@ -1,5 +1,6 @@
 using ElectronNET.API;
 using SerialCommunicator.Models;
+using SerialCommunicator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,4 +51,5 @@ void _configureServices(IServiceCollection services)
 
     services.AddControllersWithViews();
     services.AddTransient<SerialCommunicatorService>();
+    services.AddSingleton<RemoteKillSwitchService>();
 }
