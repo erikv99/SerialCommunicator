@@ -5,16 +5,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseElectron(args);
 
-_configureServices(builder.Services);
-
 builder.Configuration
     .AddJsonFile("commands.json", optional: true, reloadOnChange: false)
-    .AddJsonFile($"commands.local.json", optional: true, reloadOnChange: false);
+    .AddJsonFile("commands.local.json", optional: true, reloadOnChange: false);
 
-// TODO: Make this more elegant and move to own method
-// TODO: Fix CommandOptions not loading from JSON file for some reason.
-builder.Services.Configure<CommandOptions>(builder.Configuration.GetSection("Commands"));
-builder.Services.Configure<SerialPortOptions>(builder.Configuration.GetSection("SerialPortOptions"));
+_configureServices(builder.Services);
 
 var app = builder.Build();
 
@@ -49,6 +44,10 @@ app.WaitForShutdown();
 // TODO: move to extension method
 void _configureServices(IServiceCollection services)
 {
+    // TODO: Make this more elegant and move to own method
+    services.Configure<CommandOptions>(builder.Configuration.GetSection("Container"));
+    services.Configure<SerialPortOptions>(builder.Configuration.GetSection("SerialPortOptions"));
+
     services.AddControllersWithViews();
     services.AddTransient<SerialCommunicatorService>();
 }
