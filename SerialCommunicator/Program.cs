@@ -1,4 +1,5 @@
 using ElectronNET.API;
+using Microsoft.EntityFrameworkCore;
 using SerialCommunicator.Models;
 using SerialCommunicator.Services;
 
@@ -48,6 +49,14 @@ void _configureServices(IServiceCollection services)
     // TODO: Make this more elegant and move to own method
     services.Configure<CommandOptions>(builder.Configuration.GetSection("Container"));
     services.Configure<SerialPortOptions>(builder.Configuration.GetSection("SerialPortOptions"));
+
+    services.AddDbContext<MainDbContext>(options =>
+        options.UseSqlite(
+            $"Data Source={
+                System.IO.Path.Join(
+                    Environment.GetFolderPath(
+                        Environment.SpecialFolder.LocalApplicationData), 
+                        "MainDbContext.db")}"));
 
     services.AddControllersWithViews();
     services.AddTransient<SerialCommunicatorService>();

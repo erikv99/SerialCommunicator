@@ -1,0 +1,15 @@
+using System;
+using System.Collections.Generic;
+
+namespace SerialCommunicator.Extensions
+{
+    public static class CommandExtensions
+    {
+        public bool Compare(this Command command, Command otherCommand)
+        {
+            return command.Description == otherCommand.Description &&
+                   command.Name == otherCommand.Name &&
+                   command.Payload.SequenceEqual(otherCommand.Payload);
+        }
+    }
+}
