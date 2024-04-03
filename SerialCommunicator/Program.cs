@@ -50,13 +50,12 @@ void _configureServices(IServiceCollection services)
     services.Configure<CommandOptions>(builder.Configuration.GetSection("Container"));
     services.Configure<SerialPortOptions>(builder.Configuration.GetSection("SerialPortOptions"));
 
+    var dataSourcePath = System.IO.Path.Join(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
+        "MainDbContext.db");
+
     services.AddDbContext<MainDbContext>(options =>
-        options.UseSqlite(
-            $"Data Source={
-                System.IO.Path.Join(
-                    Environment.GetFolderPath(
-                        Environment.SpecialFolder.LocalApplicationData), 
-                        "MainDbContext.db")}"));
+        options.UseSqlite($"Data Source={dataSourcePath}"));
 
     services.AddControllersWithViews();
     services.AddTransient<SerialCommunicatorService>();

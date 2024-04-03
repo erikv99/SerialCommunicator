@@ -28,7 +28,6 @@ public class CommunicatorController : Controller
         _dbContext = dbContext;
     }
 
-
     public async Task<IActionResult> Index()
     {
         var isKillSwitchActive = await _killSwitchService.IsKillSwitchActive();
@@ -57,22 +56,27 @@ public class CommunicatorController : Controller
     {
         foreach (var command in _preConfiguredCommands)
         {
-            var existingCommand = _dbContext.Commands
-                .FirstOrDefaultAsyncDefault(c => c.Equals(command);
-            /
-            // TOdo implement logic, fix existing, wip
-            
-            / use the command.Equals method to compare the commands
-            var existingCommand = _dbContext.Commands
-                .FirstOrDefault(c => c.Name == command.Name && c.Description == command.Description && c.Payload == command.Payload);
+            var existingCommand = await _dbContext.Commands
+                .FirstOrDefaultAsync(c => 
+                    c.Description == command.Description 
+                    && c.Name == command.Name 
+                    && c.Payload.SequenceEqual(command.Payload));
+
             if (existingCommand == null)
             {
                 _dbContext.Commands.Add(command);
             }
+            else
+            {
+                // TODO, one day I guess.
+                //existingCommand!.OverrideValues(command);
+                existingCommand.Name = command.Name;
+                existingCommand.Description = command.Description;
+                existingCommand.Payload = command.Payload;
+            }
         }
 
         await _dbContext.SaveChangesAsync();
-
         _arePreConfiguredCommandsLoaded = true;
     }
 

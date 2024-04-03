@@ -20,6 +20,39 @@
             </div>
         }
 
+        <div class="add-btn-section">
+            <button class="add-btn" onclick="clickedAddButton();">
+                Add <i class="fa-solid fa-plus"></i>
+            </button>
+        </div>
+
+        <div class="add-command-section">
+            @using (Html.BeginForm(new { id = "commandForm", class="add-command-form" }))
+            {
+                <div class="form-group">
+                    <label class="control-label">Name</label>
+                    <input class="form-control" type="text" id="nameInput" />
+                    <span class="text-danger"></span> 
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Description</label>
+                    <input class="form-control" type="text" id="descriptionInput" />
+                    <span class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Payload</label>
+                    <input class="form-control" type="text" id="payloadInput" />
+                    <span class="text-danger"></span>
+                </div>
+
+                 <button type="submit" class="btn btn-primary">Submit</button>
+            }
+
+
+        <div class="add-command-section"></div>
+
         @foreach (var command in Model.Commands)
         {
             <div class="container-fluid command-container">
@@ -56,6 +89,24 @@
 </div>
 
 <script>
+
+document.getElementById('commandForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    // Access form data
+    var name = document.getElementById('NewCommand_Name').value;
+    var description = document.getElementById('NewCommand_Description').value;
+    var payload = document.getElementById('NewCommand_Payload').value;
+
+    // TODO: Handle form data...
+
+    console.log(name, description, payload);
+});
+
+    // TODO: move this to its own file
+    function clickedAddButton() {
+            
+    }
 
     function editCommand(commandId) {
         addPromptMessage("This function is not yet implemented.");
@@ -96,7 +147,53 @@
 </script>
 
 <style>
-    .mutate-btn-section {
+
+    .add-command-form {
+        width: 100%;
+  padding-right: 0.5em;
+}
+    }
+
+    .add-command-section {
+        display: block ruby;
+        margin-top: -0.3em;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        padding: 0.2em;
+        padding-right: 0.2em;
+        padding-right: 0.2em;
+        padding-right: 0.2em;
+        background-color: #2C2C2C;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        padding-right: 0.5em;
+    }
+
+    .add-btn {
+        padding: 4px 8px;
+        background: linear-gradient(to right, #08C, #6A3E06);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        margin-bottom: 0.5em;
+        margin-top: 0.2em;
+    }
+
+    .add-btn-section {
+        display: block ruby;
+        text-align: end;
+        margin-top: -0.3em;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        padding: 0.2em;
+            padding-right: 0.2em;
+        background-color: #2C2C2C;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        padding-right: 0.5em;
+    }
+
+    .mutate-btn-section{
         display: block ruby;
         text-align: end;
         margin-top: -0.3em;
