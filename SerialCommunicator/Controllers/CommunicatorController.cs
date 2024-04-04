@@ -12,13 +12,15 @@ public class CommunicatorController : Controller
     private readonly SerialCommunicatorService _serialCommunicatorService;
     private readonly RemoteKillSwitchService _killSwitchService;
     private readonly MainDbContext _dbContext;
+    private readonly ILogger<CommunicatorController> _logger;
     private  bool _arePreConfiguredCommandsLoaded = false;
 
     public CommunicatorController(
         IOptions<CommandOptions> commandSettings,
         SerialCommunicatorService serialCommunicatorService,
         RemoteKillSwitchService killSwitchService,
-        MainDbContext dbContext)
+        MainDbContext dbContext,
+        ILogger<CommunicatorController> logger)
     {
         // Loading the _preConfiguredCommands here and using it as a global variable seems like a bad idea.
         // TODO: Fix when time.
@@ -26,6 +28,7 @@ public class CommunicatorController : Controller
         _killSwitchService = killSwitchService;
         _serialCommunicatorService = serialCommunicatorService;
         _dbContext = dbContext;
+        _logger = logger;
     }
 
     public async Task<IActionResult> Index()
@@ -37,30 +40,34 @@ public class CommunicatorController : Controller
             _preConfiguredCommands.Clear();
         }
 
+        // TODO change the way we use _preConfiguredCommands, it's not a good idea to use it as a global variable.
         if (_shouldPreConfiguredCommandsBeConverted(isKillSwitchActive))
         {
             await _convertPreConfiguredCommandsAsync();
         }
-
+        
         var model = new CommunicatorVM
         {
             IsKillSwitchActive = isKillSwitchActive,
-            Commands = _preConfiguredCommands,
+            Commands = await _loadCommandsAsync(_preConfiguredCommands),
             PromptName = "SerialCommunicator",
         };
 
         return View(model);
     }
 
+    private async Task<List<Command>> _loadCommandsAsync(List<Command> commands)
+    {
+        var commandsFromDb = await _dbContext.Commands.ToListAsync();
+        commands.AddRange(commandsFromDb);
+        return commands;
+    }
+
     private async Task _convertPreConfiguredCommandsAsync()
     {
         foreach (var command in _preConfiguredCommands)
         {
-            var existingCommand = await _dbContext.Commands
-                .FirstOrDefaultAsync(c => 
-                    c.Description == command.Description 
-                    && c.Name == command.Name 
-                    && c.Payload.SequenceEqual(command.Payload));
+            var existingCommand = await _tryLoadExistingCommandAsync(command);
 
             if (existingCommand == null)
             {
@@ -80,6 +87,15 @@ public class CommunicatorController : Controller
         _arePreConfiguredCommandsLoaded = true;
     }
 
+    private async Task<Command?> _tryLoadExistingCommandAsync(Command command)
+    {
+        return await _dbContext.Commands
+            .FirstOrDefaultAsync(c =>
+                c.Description == command.Description
+                && c.Name == command.Name
+                && c.Payload.SequenceEqual(command.Payload));
+    }
+
     private bool _shouldPreConfiguredCommandsBeConverted(bool isKillSwitchActive)
     {
         return !_arePreConfiguredCommandsLoaded
@@ -87,19 +103,54 @@ public class CommunicatorController : Controller
                     && _dbContext.Commands.Any();
     }
 
-    [HttpPost]
-    public IActionResult DeleteCommand(int id)
+    private byte[] _extractPayload(string payload)
     {
-        var command = _preConfiguredCommands.FirstOrDefault(c => c.Id == id);
+        return payload.Split('-')
+            .Select(int.Parse)
+            .Select(n => (byte)n)
+            .ToArray();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddCommand(string name, string description, string payload) 
+    {
+        try
+        {
+            var command = new Command
+            {
+                Name = name,
+                Description = description,
+                Payload = _extractPayload(payload) // Todo rename to rawPayload, also to do on the frontend post call.
+            };
+
+            await _dbContext.Commands.AddAsync(command);
+            await _dbContext.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while adding a command.");
+            return Json(new { success = false });
+        }
+    }
+
+    // Todo: this design choice feels odd, change if needed.
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteCommand(int id)
+    {
+        var command = await _dbContext.Commands.FirstOrDefaultAsync(c => c.Id == id);
 
         if (command == null)
         {
             return NotFound();
         }
 
-        _preConfiguredCommands.Remove(command);
-        
-        return RedirectToAction("Index");
+        _dbContext.Commands.Remove(command);
+        await _dbContext.SaveChangesAsync();
+
+        return Json(new { success = true });
     }
 
     [HttpPost]

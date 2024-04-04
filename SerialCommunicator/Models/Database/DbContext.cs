@@ -10,7 +10,6 @@ public class MainDbContext : DbContext
     public MainDbContext(DbContextOptions<MainDbContext> options)
         : base(options)
     {
-        // Todo: check path 
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
         DbPath = Path.Join(path, "MainDbContext.db");
