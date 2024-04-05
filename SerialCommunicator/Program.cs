@@ -55,7 +55,8 @@ void _configureServices(IServiceCollection services)
         "MainDbContext.db");
 
     services.AddDbContext<MainDbContext>(options =>
-        options.UseSqlite($"Data Source={dataSourcePath}"));
+        options.UseSqlite($"Data Source={dataSourcePath}"), 
+        ServiceLifetime.Scoped);
 
     services.AddControllersWithViews();
     services.AddTransient<SerialCommunicatorService>();

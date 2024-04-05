@@ -20,8 +20,16 @@
         {
             try
             {
-                var response = await _httpClient.GetStringAsync(url);
-                return response.Trim() == "1";
+                var response = await _httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    return content.Trim() == "1";
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception ex)
             {

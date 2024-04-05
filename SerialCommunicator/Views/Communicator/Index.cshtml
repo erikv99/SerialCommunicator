@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label">Payload</label>
+                    <label class="control-label">Payload (in decimal, so 7b -> 123)</label>
                     <input 
                         class="form-control" 
                         type="text" id="payloadInput" 
@@ -56,33 +56,8 @@
             </form>
         </div>
 
-        @foreach (var command in Model.Commands)
-        {
-            <div class="container-fluid command-container">
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="command-row command-name">@command.Name</div>
-                        <div class="command-row command-description">@command.Description</div>
-                        <div class="command-row command-payload">@command.GetPayloadAsString()</div>
-                    </div>
-                    
-                    <div class="col-md-4 btn-section">
-                        
-                        <div class="row col-md-12 mutate-btn-section">
-                            <button class="mutate-btn" onclick="editCommand('@command.Id');">
-                                <i class="fa-solid fa-gear"></i>
-                            </button>
-                            <button class="mutate-btn" onclick="deleteCommand('@command.Id');">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                                <button class="mutate-btn" style="width: 5em;" onclick="sendCommand('@command.Id');">
-                                Send <i class="fa-solid fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
+        <div id="commands-container">
+        </div>
     </div>
 
     <div class="c-container p-container">
@@ -91,31 +66,24 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('#commandForm').submit(function(event) {
-                event.preventDefault();
-
-                var name = $('#nameInput').val();
-                var description = $('#descriptionInput').val();
-                var payload = $('#payloadInput').val();
-                console.log(name, description, payload);
-
-                addCommand(name, description, payload);
-            }
-        ); 
-    });
-
-    function addCommand(name, description, payload) {
+    function reloadCommands() {
         $.ajax({
-            type: "POST",
-            url: "/Communicator/AddCommand",
-            data: { 
-                name: name,
-                description: description,
-                payload: payload
-            },
+            type: "GET",
+            url: "/Communicator/GetCommands",
             success: function(response) {
-                addPromptMessage("Command '" + name + "' was added successfully.");
+
+                var commandsContainer = $("#commands-container")
+                commandsContainer.empty();
+                
+                console.log("Response: ");
+                console.log(response);
+
+                setTimeout(function() {
+
+                    commandsContainer.html(response);
+                    addPromptMessage("Change detected, updated command list.");
+
+                }, 0);
             },
             error: function(error) {
                 addPromptMessage("Error sending command: " + error);
@@ -141,34 +109,65 @@
             data: { id: commandId },
             
             success: function (response) {
-                console.log(response);
-                addPromptMessage("Command with id #" + commandId + " was deleted successfully.");
-                console.log("Success");
+                addPromptMessage("Command deleted succesfully.");
+                reloadCommands();
             },
+            error: function (jqXHR, textStatus, errorThrown) {
+
+                if (jqXHR.status === 404) {
+                
+                    addPromptMessage("Command with id #" + commandId + " was not found.");
+                } 
+                else {
+                
+                    addPromptMessage("Failed to delete command with id #" + commandId + ".");
+                }
+            }
+        });
+    }
+
+    function addCommand(name, description, payload) {
+        $.ajax({
+            type: "POST",
+            url: "/Communicator/AddCommand",
+            data: { 
+                name: name, 
+                description: description, 
+                payload: payload 
+            },
+            success: function (response) {
+
+                addPromptMessage("Command added successfully.");
+                reloadCommands();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
             
-            error: function (response) {
-                console.log(response);
-                addPromptMessage("Failed to delete command with id #" + commandId + ".");
+                addPromptMessage("Failed to add command.");
             }
         });
     }
 
     function sendCommand(commandId) { 
         $.ajax({
-
             type: "POST",
             url: "/Communicator/SendCommand",
-            data: { id: commandId },
-            
-            success: function (response) {
-                console.log(response);
-                addPromptMessage("Command with id #" + commandId + " was sent successfully.");
-                console.log("Success");
+            data: { 
+                id: commandId 
             },
-            
-            error: function (response) {
-                console.log(response);
-                addPromptMessage("Failed to send command with id #" + commandId + ".");
+            success: function (response) {
+                
+                addPromptMessage("Command with id #" + commandId + " was sent successfully.");
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+
+                if (jqXHR.status === 404) {
+                
+                    addPromptMessage("Command with id #" + commandId + " was not found.");
+                } 
+                else {
+                
+                    addPromptMessage("Failed to send command with id #" + commandId + ".");
+                }
             }
         });
     }
@@ -179,6 +178,22 @@
         var promptMessage = currentTime + " " + "@Model.PromptName" + "> " +  capitalizedMessage;
         $('.p-container').append('<span class="prompt"> ' + promptMessage + '</span>');
     }
+
+    $(document).ready(function() {
+        $('#commandForm').submit(function(event) {
+                event.preventDefault();
+
+                var name = $('#nameInput').val();
+                var description = $('#descriptionInput').val();
+                var payload = $('#payloadInput').val();
+                console.log(name, description, payload);
+
+                addCommand(name, description, payload);
+            }
+        ); 
+
+        reloadCommands();
+    });
 </script>
 
 <style>

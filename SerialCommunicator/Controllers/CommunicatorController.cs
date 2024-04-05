@@ -111,6 +111,14 @@ public class CommunicatorController : Controller
             .ToArray();
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetCommands()
+    {
+        var commands = await _dbContext.Commands.ToListAsync();
+        commands = commands.OrderByDescending(c => c.Id).ToList();
+        return PartialView("_CommandsOverviewPartial", commands);
+    }
+
     [HttpPost]
     public async Task<IActionResult> AddCommand(string name, string description, string payload) 
     {
@@ -150,7 +158,7 @@ public class CommunicatorController : Controller
         _dbContext.Commands.Remove(command);
         await _dbContext.SaveChangesAsync();
 
-        return Json(new { success = true });
+        return Ok();
     }
 
     [HttpPost]
