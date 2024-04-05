@@ -174,9 +174,9 @@
     }
 
     function addPromptMessage(message) {
-
+        var currentTime = '[@DateTime.Now.ToString("HH:mm:ss")]';
         var capitalizedMessage = message.charAt(0).toUpperCase() + message.slice(1);
-        var promptMessage = "@Model.PromptName" + "> " +  capitalizedMessage;
+        var promptMessage = currentTime + " " + "@Model.PromptName" + "> " +  capitalizedMessage;
         $('.p-container').append('<span class="prompt"> ' + promptMessage + '</span>');
     }
 </script>
@@ -349,6 +349,7 @@
         width: 100%;
         display: block;
         font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+        font-size: 12px;
     }
 
     .prompt-message {
