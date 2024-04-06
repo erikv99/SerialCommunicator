@@ -1,4 +1,7 @@
-﻿namespace SerialCommunicator.Services
+﻿using System.Net;
+using System.Net.Http.Headers;
+
+namespace SerialCommunicator.Services
 {
     public class RemoteKillSwitchService
     {
@@ -13,23 +16,23 @@
 
         public async Task<bool> IsKillSwitchActive() 
         {
-            return await _getRemoteKillSwitchStatusAsync("https://github.com/erikv99/data/blob/main/r_ks_00.txt");
+            return await _getRemoteKillSwitchStatusAsync("https://raw.githubusercontent.com/erikv99/data/main/r_ks_00.txt");
         }
 
         private async Task<bool> _getRemoteKillSwitchStatusAsync(string url)
         {
             try
             {
-                var response = await _httpClient.GetAsync(url);
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    return content.Trim() == "1";
-                }
-                else
-                {
-                    return false;
-                }
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue { NoCache = true };
+                client.DefaultRequestHeaders.Pragma.Add(new NameValueHeaderValue("no-cache"));
+                client.DefaultRequestHeaders.IfModifiedSince = DateTime.UtcNow;
+
+                var response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadAsStringAsync();
+                return content.Trim() == "1";
             }
             catch (Exception ex)
             {

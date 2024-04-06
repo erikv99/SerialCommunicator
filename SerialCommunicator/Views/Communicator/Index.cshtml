@@ -68,6 +68,11 @@
 
 <script>
     function reloadCommands() {
+
+        if ('@Model.IsKillSwitchActive' === 'True') {
+            return;
+        }
+
         $.ajax({
             type: "GET",
             url: "/Communicator/GetCommands",
@@ -94,15 +99,33 @@
     }
 
     function clickedAddButton() {
+
+        if ('@Model.IsKillSwitchActive' === 'True') {
+            addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+            return;
+        }
+
         $('.add-command-section').slideToggle();
     }
 
     function editCommand(commandId) {
 
+        if ('@Model.IsKillSwitchActive' === 'True') {
+            addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+            return;
+        }
+
         addPromptMessage("This function is not yet implemented.");
     }
 
     function deleteCommand(commandId) {
+
+        // Todo, this is a bit of a hack, should be done in a better way.
+        if ('@Model.IsKillSwitchActive' === 'True') {
+            addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+            return;
+        }
+
         $.ajax({
 
             type: "POST",
@@ -128,6 +151,12 @@
     }
 
     function addCommand(name, description, payload) {
+
+        if ('@Model.IsKillSwitchActive' === 'True') {
+            addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+            return;
+        }
+
         $.ajax({
             type: "POST",
             url: "/Communicator/AddCommand",
@@ -149,6 +178,14 @@
     }
 
     function sendCommand(commandId) { 
+
+     addPromptMessage("@Model.IsKillSwitchActive")
+
+        if ('@Model.IsKillSwitchActive' === 'True') {
+            addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+            return;
+        }
+
         $.ajax({
             type: "POST",
             url: "/Communicator/SendCommand",
@@ -184,6 +221,11 @@
         $('#commandForm').submit(function(event) {
                 event.preventDefault();
 
+                if ('@Model.IsKillSwitchActive' === 'True') {
+                    addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+                    return;
+                }
+
                 var name = $('#nameInput').val();
                 var description = $('#descriptionInput').val();
                 var payload = $('#payloadInput').val();
@@ -198,7 +240,7 @@
 </script>
 
 <style>
-
+    
     .submit-container {
         width: 100%;
         height: 3.5em;

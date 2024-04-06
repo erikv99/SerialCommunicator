@@ -33,23 +33,21 @@ public class CommunicatorController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var isKillSwitchActive = await _killSwitchService.IsKillSwitchActive();
-
-        if (isKillSwitchActive)
-        {
-            _preConfiguredCommands.Clear();
-        }
+        // TODO Change this to a redirect to a different page if the kill switch is active.
+        var killSwitchIsActive = await _killSwitchService.IsKillSwitchActive();
 
         // TODO change the way we use _preConfiguredCommands, it's not a good idea to use it as a global variable.
-        if (_shouldPreConfiguredCommandsBeConverted(isKillSwitchActive))
+        if (!killSwitchIsActive && _shouldPreConfiguredCommandsBeConverted())
         {
             await _convertPreConfiguredCommandsAsync();
         }
         
         var model = new CommunicatorVM
         {
-            IsKillSwitchActive = isKillSwitchActive,
-            Commands = await _loadCommandsAsync(_preConfiguredCommands),
+            IsKillSwitchActive = killSwitchIsActive,
+            Commands = killSwitchIsActive 
+                ? [] 
+                : await _loadCommandsAsync(_preConfiguredCommands),
             PromptName = "SerialCommunicator",
         };
 
@@ -96,11 +94,10 @@ public class CommunicatorController : Controller
                 && c.Payload.SequenceEqual(command.Payload));
     }
 
-    private bool _shouldPreConfiguredCommandsBeConverted(bool isKillSwitchActive)
+    private bool _shouldPreConfiguredCommandsBeConverted()
     {
         return !_arePreConfiguredCommandsLoaded
-                    && !isKillSwitchActive
-                    && _dbContext.Commands.Any();
+            && _dbContext.Commands.Any();
     }
 
     private byte[] _extractPayload(string payload)
