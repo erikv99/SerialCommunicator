@@ -105,9 +105,9 @@ public class CommunicatorController : Controller
 
     private byte[] _extractPayload(string payload)
     {
-        return payload.Split('-')
-            .Select(int.Parse)
-            .Select(n => (byte)n)
+        string[] hexValues = payload.Split('-');
+        return hexValues
+            .Select(hex => Convert.ToByte(hex, 16))
             .ToArray();
     }
 
@@ -139,7 +139,7 @@ public class CommunicatorController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while adding a command.");
-            return Json(new { success = false });
+            return BadRequest();
         }
     }
 
