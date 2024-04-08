@@ -366,3 +366,4 @@ FodyWeavers.xsd
 /.idea
 .vscode/launch.json
 .vscode/settings.json
+SerialCommunicator/PreConfiguredDb.sql

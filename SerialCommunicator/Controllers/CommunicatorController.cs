@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SerialCommunicator.Models;
 using SerialCommunicator.Services;
+using System;
+using System.IO;
+using Microsoft.Data.Sqlite;
 
 namespace SerialCommunicator.Controllers;
 
@@ -13,7 +16,9 @@ public class CommunicatorController : Controller
     private readonly RemoteKillSwitchService _killSwitchService;
     private readonly MainDbContext _dbContext;
     private readonly ILogger<CommunicatorController> _logger;
-    private  bool _arePreConfiguredCommandsLoaded = false;
+    
+    private bool _arePreConfiguredCommandsLoaded = false;
+    private static string  PRECONFIGURED_DB_PATH = "preconfigured.db";
 
     public CommunicatorController(
         IOptions<CommandOptions> commandSettings,
@@ -24,6 +29,17 @@ public class CommunicatorController : Controller
     {
         // Loading the _preConfiguredCommands here and using it as a global variable seems like a bad idea.
         // TODO: Fix when time.
+
+        PRECONFIGURED_DB_PATH = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PRECONFIGURED_DB_PATH);
+        if (System.IO.File.Exists(PRECONFIGURED_DB_PATH))
+        {
+            ImportPreconfiguredDb();
+        }
+        else
+        {
+            Console.WriteLine("Preconfigured database not found.");
+        }
+
         _preConfiguredCommands = commandSettings.Value?.Commands ?? new List<Command>();
         _killSwitchService = killSwitchService;
         _serialCommunicatorService = serialCommunicatorService;
@@ -54,6 +70,20 @@ public class CommunicatorController : Controller
         return View(model);
     }
 
+    public void ImportPreconfiguredDb()
+    {
+        try
+        {
+            string sql = System.IO.File.ReadAllText(PRECONFIGURED_DB_PATH);
+            _dbContext.Database.ExecuteSqlRaw(sql);
+           _logger.LogInformation("Preconfigured database imported successfully."); 
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"An error occurred while attempting to load preconfigured database: {ex.Message}");
+        }
+    }
+    
     private async Task<List<Command>> _loadCommandsAsync(List<Command> commands)
     {
         var commandsFromDb = await _dbContext.Commands.ToListAsync();
@@ -161,7 +191,7 @@ public class CommunicatorController : Controller
     [HttpPost]
     public IActionResult SendCommand(int id) 
     {
-        var command = _preConfiguredCommands.FirstOrDefault(c => c.Id == id);
+        var command = _dbContext.Commands.FirstOrDefault(c => c.Id == id);
 
         if (command == null) 
         {
