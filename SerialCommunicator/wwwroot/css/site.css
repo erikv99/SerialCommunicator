@@ -40,3 +40,16 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
+
+.gradient-text-purple-blue {
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-color: var(--theme-gradient-text-purple);
+  --theme-gradient-text-purple: #cd9bcf;
+  --theme-gradient-text-blue: #9ccbee;
+  background-image: linear-gradient(90deg,var(--theme-gradient-text-purple),var(--theme-gradient-text-blue));
+  color: #0000;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.4;
+}
+
