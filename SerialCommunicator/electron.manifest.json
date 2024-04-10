@@ -6,9 +6,9 @@
   "name": "SerialCommunicator",
   "author": "",
   "singleInstance": false,
-  "environment": "Production",
+  "environment": "Development",
   "build": {
-    "appId": "com.SerialCommunicator.app",
+    "appId": "com.SerialCommunicator.app", 
     "productName": "SerialCommunicator",
     "copyright": "Copyright © 2020",
     "buildVersion": "1.0.0",

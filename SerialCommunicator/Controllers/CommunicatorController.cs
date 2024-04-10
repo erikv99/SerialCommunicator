@@ -1,46 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SerialCommunicator.Models;
 using SerialCommunicator.Services;
-using System;
-using System.IO;
-using Microsoft.Data.Sqlite;
 
 namespace SerialCommunicator.Controllers;
 
 public class CommunicatorController : Controller
 {
-    private readonly List<Command> _preConfiguredCommands;
+    private readonly List<Command>? _preConfiguredCommands;
     private readonly SerialCommunicatorService _serialCommunicatorService;
     private readonly RemoteKillSwitchService _killSwitchService;
     private readonly MainDbContext _dbContext;
     private readonly ILogger<CommunicatorController> _logger;
     
-    private bool _arePreConfiguredCommandsLoaded = false;
-    private static string  PRECONFIGURED_DB_PATH = "preconfigured.db";
+    private bool _isKillSwitchActive = false;
 
     public CommunicatorController(
-        IOptions<CommandOptions> commandSettings,
+        IOptions<CommandOptions> commandOptions,
         SerialCommunicatorService serialCommunicatorService,
         RemoteKillSwitchService killSwitchService,
         MainDbContext dbContext,
         ILogger<CommunicatorController> logger)
     {
-        // Loading the _preConfiguredCommands here and using it as a global variable seems like a bad idea.
-        // TODO: Fix when time.
-
-        PRECONFIGURED_DB_PATH = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PRECONFIGURED_DB_PATH);
-        if (System.IO.File.Exists(PRECONFIGURED_DB_PATH))
-        {
-            ImportPreconfiguredDb();
-        }
-        else
-        {
-            Console.WriteLine("Preconfigured database not found.");
-        }
-
-        _preConfiguredCommands = commandSettings.Value?.Commands ?? new List<Command>();
+        _preConfiguredCommands = commandOptions.Value?.Commands;
         _killSwitchService = killSwitchService;
         _serialCommunicatorService = serialCommunicatorService;
         _dbContext = dbContext;
@@ -50,112 +34,47 @@ public class CommunicatorController : Controller
     public async Task<IActionResult> Index()
     {
         // TODO Change this to a redirect to a different page if the kill switch is active.
-        var killSwitchIsActive = await _killSwitchService.IsKillSwitchActive();
+        _isKillSwitchActive = await _killSwitchService.IsKillSwitchActive();
 
-        // TODO change the way we use _preConfiguredCommands, it's not a good idea to use it as a global variable.
-        if (!killSwitchIsActive && _shouldPreConfiguredCommandsBeConverted())
-        {
-            await _convertPreConfiguredCommandsAsync();
-        }
-        
         var model = new CommunicatorVM
         {
-            IsKillSwitchActive = killSwitchIsActive,
-            Commands = killSwitchIsActive 
-                ? [] 
-                : await _loadCommandsAsync(_preConfiguredCommands),
+            IsKillSwitchActive = _isKillSwitchActive,
+            Commands = await _loadCommandsAsync(),
             PromptName = "SerialCommunicator",
         };
 
         return View(model);
     }
 
-    public void ImportPreconfiguredDb()
-    {
-        try
-        {
-            string sql = System.IO.File.ReadAllText(PRECONFIGURED_DB_PATH);
-            _dbContext.Database.ExecuteSqlRaw(sql);
-           _logger.LogInformation("Preconfigured database imported successfully."); 
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"An error occurred while attempting to load preconfigured database: {ex.Message}");
-        }
-    }
-    
-    private async Task<List<Command>> _loadCommandsAsync(List<Command> commands)
-    {
-        var commandsFromDb = await _dbContext.Commands.ToListAsync();
-        commands.AddRange(commandsFromDb);
-        return commands;
-    }
-
-    private async Task _convertPreConfiguredCommandsAsync()
-    {
-        foreach (var command in _preConfiguredCommands)
-        {
-            var existingCommand = await _tryLoadExistingCommandAsync(command);
-
-            if (existingCommand == null)
-            {
-                _dbContext.Commands.Add(command);
-            }
-            else
-            {
-                // TODO, one day I guess.
-                //existingCommand!.OverrideValues(command);
-                existingCommand.Name = command.Name;
-                existingCommand.Description = command.Description;
-                existingCommand.Payload = command.Payload;
-            }
-        }
-
-        await _dbContext.SaveChangesAsync();
-        _arePreConfiguredCommandsLoaded = true;
-    }
-
-    private async Task<Command?> _tryLoadExistingCommandAsync(Command command)
-    {
-        return await _dbContext.Commands
-            .FirstOrDefaultAsync(c =>
-                c.Description == command.Description
-                && c.Name == command.Name
-                && c.Payload.SequenceEqual(command.Payload));
-    }
-
-    private bool _shouldPreConfiguredCommandsBeConverted()
-    {
-        return !_arePreConfiguredCommandsLoaded
-            && _dbContext.Commands.Any();
-    }
-
-    private byte[] _extractPayload(string payload)
-    {
-        string[] hexValues = payload.Split('-');
-        return hexValues
-            .Select(hex => Convert.ToByte(hex, 16))
-            .ToArray();
-    }
-
     [HttpGet]
     public async Task<IActionResult> GetCommands()
     {
+        if (_isKillSwitchActive)
+        {
+            return BadRequest();
+        }
+
         var commands = await _dbContext.Commands.ToListAsync();
         commands = commands.OrderByDescending(c => c.Id).ToList();
         return PartialView("_CommandsOverviewPartial", commands);
     }
 
+    // TODO move actual command logic to a service.
     [HttpPost]
-    public async Task<IActionResult> AddCommand(string name, string description, string payload) 
+    public async Task<IActionResult> AddCommand(string name, string description, string rawPayload) 
     {
+        if (_isKillSwitchActive)
+        {
+            return BadRequest();
+        }
+
         try
         {
             var command = new Command
             {
                 Name = name,
                 Description = description,
-                Payload = _extractPayload(payload) // Todo rename to rawPayload, also to do on the frontend post call.
+                Payload = _extractPayload(rawPayload)
             };
 
             await _dbContext.Commands.AddAsync(command);
@@ -175,6 +94,11 @@ public class CommunicatorController : Controller
     [HttpPost]
     public async Task<IActionResult> DeleteCommand(int id)
     {
+        if (_isKillSwitchActive)
+        {
+            return BadRequest();
+        }
+
         var command = await _dbContext.Commands.FirstOrDefaultAsync(c => c.Id == id);
 
         if (command == null)
@@ -191,6 +115,11 @@ public class CommunicatorController : Controller
     [HttpPost]
     public IActionResult SendCommand(int id) 
     {
+        if (_isKillSwitchActive)
+        {
+            return BadRequest();
+        }
+
         var command = _dbContext.Commands.FirstOrDefault(c => c.Id == id);
 
         if (command == null) 
@@ -201,5 +130,36 @@ public class CommunicatorController : Controller
         var result = _serialCommunicatorService.SendCommand(command);
 
         return Json(new { success = true, response = result });
+    }
+
+    private async Task<List<Command>> _loadCommandsAsync()
+    {
+        var commands = new List<Command>();
+
+        if (_isKillSwitchActive)
+        {
+            return commands;
+        }
+
+        if (_preConfiguredCommands != null && _preConfiguredCommands.Any())
+        {
+            commands.AddRange(_preConfiguredCommands);
+        }
+
+        var commandsFromDb = await _dbContext.Commands.ToListAsync();
+        if (commandsFromDb != null && commands.Any())
+        {
+            commands.AddRange(commandsFromDb);
+        }
+
+        return commands;
+    }
+
+    private byte[] _extractPayload(string payload)
+    {
+        string[] hexValues = payload.Split('-');
+        return hexValues
+            .Select(hex => Convert.ToByte(hex, 16))
+            .ToArray();
     }
 }

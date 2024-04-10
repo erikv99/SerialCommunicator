@@ -24,8 +24,8 @@ public class SerialCommunicatorService
     [HttpPost]
     public bool SendCommand(Command command)
     {
-        _logger.LogInformation($"Attempting to send the '{command.Name}' command.");
-        _logger.LogInformation($"Payload: '{BitConverter.ToString(command.Payload)}' command.");
+        _logger.LogInformation("Attempting to send the {CommandName} command.", command.Name);
+        _logger.LogInformation("Payload: {Payload} command.", BitConverter.ToString(command.Payload));
         SerialPort? port = null;
         var result = false;
 

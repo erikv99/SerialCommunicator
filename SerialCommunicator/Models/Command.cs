@@ -4,14 +4,14 @@ namespace SerialCommunicator.Models;
 
 public class Command 
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; } 
     public required byte[] Payload { get; set; }
 
     public string GetPayloadAsString()
     {
-        StringBuilder builder = new StringBuilder(Payload.Length * 3);
+        StringBuilder builder = new(Payload.Length * 3);
 
         foreach (byte b in Payload)
         {

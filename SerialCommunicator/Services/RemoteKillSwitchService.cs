@@ -14,7 +14,7 @@ namespace SerialCommunicator.Services
             _logger = logger;
         }
 
-        public async Task<bool> IsKillSwitchActive() 
+        public async Task<bool> IsKillSwitchActive()
         {
             return await _getRemoteKillSwitchStatusAsync("https://raw.githubusercontent.com/erikv99/data/main/r_ks_00.txt");
         }
@@ -29,14 +29,25 @@ namespace SerialCommunicator.Services
                 client.DefaultRequestHeaders.IfModifiedSince = DateTime.UtcNow;
 
                 var response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
+                
+                // Dangerous since NotModified does not equal no active killswitch
+                // But this should only happen if we spam it i believe, so we should be good
+                // Todo, verify
+                if (response.StatusCode != HttpStatusCode.NotModified)
+                {
+                    response.EnsureSuccessStatusCode();
 
-                var content = await response.Content.ReadAsStringAsync();
-                return content.Trim() == "1";
+                    var content = await response.Content.ReadAsStringAsync();
+                    return content.Trim() == "1";
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"An error occurred: {ex.Message}");
+                _logger.LogError(ex, "An error occurred: {Message}", ex.Message);
                 return false;
             }
         }

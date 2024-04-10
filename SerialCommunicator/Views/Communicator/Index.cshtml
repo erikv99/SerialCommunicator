@@ -14,7 +14,7 @@
                 <div class="row">
                     <div class="col-md-8">
                         <div class="command-row command-name">Kill Switch</div>
-                        <div class="command-row command-description">The kill switch is currently active. All commands are disabled.</div>
+                        <div class="command-row command-description">The kill switch is currently active. All interactions are disabled.</div>
                     </div>
                 </div>
             </div>
@@ -101,7 +101,7 @@
     function clickedAddButton() {
 
         if ('@Model.IsKillSwitchActive' === 'True') {
-            addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+            addPromptMessage("Kill switch is currently active, all interactions are disabled.");
             return;
         }
 
@@ -111,7 +111,7 @@
     function editCommand(commandId) {
 
         if ('@Model.IsKillSwitchActive' === 'True') {
-            addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+            addPromptMessage("Kill switch is currently active, all interactions are disabled.");
             return;
         }
 
@@ -122,7 +122,7 @@
 
         // Todo, this is a bit of a hack, should be done in a better way.
         if ('@Model.IsKillSwitchActive' === 'True') {
-            addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+            addPromptMessage("Kill switch is currently active, all interactions are disabled.");
             return;
         }
 
@@ -153,7 +153,7 @@
     function addCommand(name, description, payload) {
 
         if ('@Model.IsKillSwitchActive' === 'True') {
-            addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+            addPromptMessage("Kill switch is currently active, all interactions are disabled.");
             return;
         }
 
@@ -163,7 +163,7 @@
             data: { 
                 name: name, 
                 description: description, 
-                payload: payload 
+                rawPayload: payload 
             },
             success: function (response) {
 
@@ -182,7 +182,7 @@
      addPromptMessage("@Model.IsKillSwitchActive")
 
         if ('@Model.IsKillSwitchActive' === 'True') {
-            addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+            addPromptMessage("Kill switch is currently active, all interactions are disabled.");
             return;
         }
 
@@ -222,7 +222,7 @@
                 event.preventDefault();
 
                 if ('@Model.IsKillSwitchActive' === 'True') {
-                    addPromptMessage("Kill switch is currently active, all interaction is disabled.");
+                    addPromptMessage("Kill switch is currently active, all interactions are disabled.");
                     return;
                 }
 

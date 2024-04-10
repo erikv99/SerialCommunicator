@@ -1,5 +1,7 @@
 using ElectronNET.API;
+using ElectronNET.API.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SerialCommunicator.Models;
 using SerialCommunicator.Services;
 
@@ -19,13 +21,10 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
 }
 
-// (GLOBAL) TODO add favicon
-
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -38,27 +37,97 @@ app.MapControllerRoute(
 
 await app.StartAsync();
 
-// Temporarily disabled for development purposes.
-//await Electron.WindowManager.CreateWindowAsync();
+try
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+    await _configureDatabaseAsync(app);
+
+    //await Electron.WindowManager.CreateWindowAsync(app.Urls.FirstOrDefault());
+    ElectronBootstrapAsync();
+}
+catch (Exception ex)
+{
+    // Log the exception
+    Console.WriteLine($"An error occurred: {ex.Message}");
+}
 
 app.WaitForShutdown();
 
-// TODO: move to extension method
+async void ElectronBootstrapAsync()
+{
+    BrowserWindowOptions options = new BrowserWindowOptions
+    {
+        Show = false,
+
+    };
+
+    BrowserWindow mainWindow = await Electron.WindowManager.CreateWindowAsync(options);
+
+    mainWindow.OnReadyToShow += () =>
+    {
+        mainWindow.Show();
+        mainWindow.SetTitle("SerialCommunicator");
+
+        if (app.Environment.IsDevelopment())
+        {
+            mainWindow.WebContents.OpenDevTools();
+        }
+    };
+}
+
 void _configureServices(IServiceCollection services)
 {
-    // TODO: Make this more elegant and move to own method
     services.Configure<CommandOptions>(builder.Configuration.GetSection("Container"));
     services.Configure<SerialPortOptions>(builder.Configuration.GetSection("SerialPortOptions"));
 
-    var dataSourcePath = System.IO.Path.Join(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
+    var dataSourcePath = Path.Join(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "MainDbContext.db");
 
     services.AddDbContext<MainDbContext>(options =>
-        options.UseSqlite($"Data Source={dataSourcePath}"), 
+        options.UseSqlite($"Data Source={dataSourcePath}"),
         ServiceLifetime.Scoped);
 
     services.AddControllersWithViews();
     services.AddTransient<SerialCommunicatorService>();
     services.AddSingleton<RemoteKillSwitchService>();
+
+    // Add logging
+    services.AddLogging(loggingBuilder =>
+    {
+        loggingBuilder.AddConsole();
+        loggingBuilder.AddDebug();
+    });
+}
+
+/// <summary>
+/// Configures the database for the web application.
+/// </summary>
+/// <param name="app">The web application.</param>
+/// <returns>A task representing the asynchronous operation.</returns>
+async Task _configureDatabaseAsync(WebApplication app)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var serviceProvider = scope.ServiceProvider;
+        var dbContext = serviceProvider.GetRequiredService<MainDbContext>();
+        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+
+        logger.LogInformation("Configuring the database...");
+
+        await dbContext.Database.MigrateAsync();
+
+        if (!dbContext.Commands.Any())
+        {
+            var commandOptions = serviceProvider.GetRequiredService<IOptions<CommandOptions>>().Value;
+
+            if (commandOptions?.Commands != null)
+            {
+                dbContext.Commands.AddRange(entities: commandOptions.Commands);
+                await dbContext.SaveChangesAsync();
+                logger.LogInformation("Commands added to the database.");
+            }
+        }
+    }
 }

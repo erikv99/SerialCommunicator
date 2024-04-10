@@ -5,6 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Functionality\**" />
+    <Content Remove="Functionality\**" />
+    <EmbeddedResource Remove="Functionality\**" />
+    <None Remove="Functionality\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Remove="Extensions\CommandExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -24,8 +30,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
-    <Compile Include="PreConfiguredDb.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    </ItemGroup>
+  </ItemGroup>
 </Project>
