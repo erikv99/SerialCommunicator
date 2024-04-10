@@ -165,7 +165,7 @@
                 description: description, 
                 rawPayload: payload 
             },
-            success: function (response) {
+            success: function () {
 
                 addPromptMessage("Command added successfully.");
                 reloadCommands();
@@ -190,7 +190,7 @@
             data: { 
                 id: commandId 
             },
-            success: function (response) {
+            success: function () {
                 
                 addPromptMessage("Command with id #" + commandId + " was sent successfully.");
             },
