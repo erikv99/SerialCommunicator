@@ -367,3 +367,4 @@ FodyWeavers.xsd
 .vscode/launch.json
 .vscode/settings.json
 SerialCommunicator/PreConfiguredDb.sql
+/SerialCommunicator/.config/dotnet-tools.json
