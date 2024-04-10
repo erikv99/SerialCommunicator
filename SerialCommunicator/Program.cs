@@ -1,13 +1,9 @@
-using ElectronNET.API;
-using ElectronNET.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SerialCommunicator.Models;
 using SerialCommunicator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.WebHost.UseElectron(args);
 
 builder.Configuration
     .AddJsonFile("commands.json", optional: true, reloadOnChange: false)
@@ -39,42 +35,15 @@ await app.StartAsync();
 
 try
 {
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
-
     await _configureDatabaseAsync(app);
-
-    //await Electron.WindowManager.CreateWindowAsync(app.Urls.FirstOrDefault());
-    ElectronBootstrapAsync();
 }
 catch (Exception ex)
 {
-    // Log the exception
-    Console.WriteLine($"An error occurred: {ex.Message}");
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogCritical(ex, "An error occurred: {Message}", ex.Message);
 }
 
 app.WaitForShutdown();
-
-async void ElectronBootstrapAsync()
-{
-    BrowserWindowOptions options = new BrowserWindowOptions
-    {
-        Show = false,
-
-    };
-
-    BrowserWindow mainWindow = await Electron.WindowManager.CreateWindowAsync(options);
-
-    mainWindow.OnReadyToShow += () =>
-    {
-        mainWindow.Show();
-        mainWindow.SetTitle("SerialCommunicator");
-
-        if (app.Environment.IsDevelopment())
-        {
-            mainWindow.WebContents.OpenDevTools();
-        }
-    };
-}
 
 void _configureServices(IServiceCollection services)
 {

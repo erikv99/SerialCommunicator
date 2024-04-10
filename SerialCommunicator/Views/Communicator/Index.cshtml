@@ -179,8 +179,6 @@
 
     function sendCommand(commandId) { 
 
-     addPromptMessage("@Model.IsKillSwitchActive")
-
         if ('@Model.IsKillSwitchActive' === 'True') {
             addPromptMessage("Kill switch is currently active, all interactions are disabled.");
             return;
@@ -236,6 +234,8 @@
         ); 
 
         reloadCommands();
+
+        addPromptMessage("Is killswitch on: " + '@Model.IsKillSwitchActive')
     });
 </script>
 
