@@ -1,0 +1,54 @@
+﻿@model SettingsVm
+
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<div class="bg-zinc-900 text-white min-h-screen flex flex-col items-center justify-center">
+    <h1 class="text-3xl font-bold mb-8">Settings</h1>
+    <div class="bg-zinc-800 p-4 rounded-lg w-full max-w-md">
+        <form method="post" asp-controller="Settings" asp-action="Save">
+            <div class="flex items-center justify-between mb-4">
+                <label for="portName" class="mr-2">Port Name:</label>
+                <input type="text" id="portName" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.PortName" name="PortName">
+            </div>
+            <div class="flex items-center justify-between mb-4">
+                <label for="baudRate" class="mr-2">Baud Rate:</label>
+                <input type="number" id="baudRate" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.BaudRate" name="BaudRate">
+            </div>
+            <div class="flex items-center justify-between mb-4">
+                <label for="parity" class="mr-2">Parity:</label>
+                <select id="parity" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" name="Parity">
+                    <option value="None" selected>None</option>
+                    <option value="Even">Even</option>
+                    <option value="Odd">Odd</option>
+                </select>
+            </div>
+            <div class="flex items-center justify-between mb-4">
+                <label for="dataBits" class="mr-2">Data Bits:</label>
+                <input type="number" id="dataBits" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.DataBits" name="DataBits">
+            </div>
+            <div class="flex items-center justify-between mb-4">
+                <label for="stopBits" class="mr-2">Stop Bits:</label>
+                <input type="number" id="stopBits" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.StopBits" name="StopBits">
+            </div>
+            <div class="flex items-center justify-between mb-4">
+                <label for="handshake" class="mr-2">Handshake:</label>
+                <select id="handshake" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" name="Handshake">
+                    <option value="None" selected>None</option>
+                    <option value="XOnXOff">XOnXOff</option>
+                    <option value="RequestToSend">RequestToSend</option>
+                </select>
+            </div>
+            <div class="flex items-center justify-between mb-4">
+                <label for="readTimeout" class="mr-2">Read Timeout:</label>
+                <input type="number" id="readTimeout" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.ReadTimeout" name="ReadTimeout">
+            </div>
+            <div class="flex items-center justify-between mb-4">
+                <label for="writeTimeout" class="mr-2">Write Timeout:</label>
+                <input type="number" id="writeTimeout" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.WriteTimeout" name="WriteTimeout">
+            </div>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save</button>
+        </form>
+    </div>
+</div>

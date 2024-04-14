@@ -43,7 +43,7 @@ try
 
     await _configureDatabaseAsync(app);
 
-    await ElectronBootstrapAsync();
+    //await ElectronBootstrapAsync();
 }
 catch (Exception ex)
 {
@@ -89,7 +89,6 @@ async Task ElectronBootstrapAsync()
 void _configureServices(IServiceCollection services)
 {
     services.Configure<CommandOptions>(builder.Configuration.GetSection("Container"));
-    services.Configure<SerialPortOptions>(builder.Configuration.GetSection("SerialPortOptions"));
 
     var dataSourcePath = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -127,6 +126,12 @@ async Task _configureDatabaseAsync(WebApplication app)
         logger.LogInformation("Configuring the database...");
 
         await dbContext.Database.MigrateAsync();
+
+        if (!dbContext.CommunicationSettings.Any()) 
+        {
+            
+        }
+
 
         if (!dbContext.Commands.Any())
         {
