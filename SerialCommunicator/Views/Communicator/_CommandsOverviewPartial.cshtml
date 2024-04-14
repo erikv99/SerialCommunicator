@@ -3,15 +3,9 @@
 @foreach (var command in Model)
 {
     <div class="container-fluid command-container">
+
         <div class="row">
-            <div class="col-md-8">
-                <div class="command-row command-name">@command.Name</div>
-                <div class="command-row command-description">@command.Description</div>
-                <div class="command-row command-payload">@command.GetPayloadAsString()</div>
-            </div>
-            
-            <div class="col-md-4 btn-section">
-                
+            <div class="col-md-12 btn-section minus-margin">
                 <div class="row col-md-12 mutate-btn-section">
                     <button class="mutate-btn" onclick="editCommand('@command.Id');">
                         <i class="fa-solid fa-gear"></i>
@@ -19,11 +13,45 @@
                     <button class="mutate-btn" onclick="deleteCommand('@command.Id');">
                         <i class="fa-solid fa-trash"></i>
                     </button>
-                        <button class="mutate-btn" style="width: 5em;" onclick="sendCommand('@command.Id');">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="command-row command-name">@command.Name</div>
+                <div class="command-row command-description">@command.Description</div>
+                <div class="command-row command-payload">@command.GetPayloadAsString()</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 btn-section">
+                <div class="row col-md-12 mutate-btn-section">
+                    <button id="send-btn" class="mutate-btn" onclick="sendCommand('@command.Id');">
                         Send <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
             </div>
         </div>
+
     </div>
 }
+
+<style>
+    
+    .minus-margin {
+        margin-bottom: -1.5em;
+    }
+
+    #send-btn {
+        width: 5em;
+        margin-top: 1em;
+    }
+
+    .mutate-btn-section {
+        display: block;
+        text-align: end;
+        margin-top: -0.3em;
+    }
+</style>

@@ -130,8 +130,9 @@
 
             type: "POST",
             url: "/Communicator/DeleteCommand",
-            data: { id: commandId },
-            
+            data: { 
+                id: commandId 
+            },
             success: function (response) {
                 addPromptMessage("Command deleted succesfully.");
                 reloadCommands();
@@ -165,7 +166,7 @@
                 description: description, 
                 rawPayload: payload 
             },
-            success: function (response) {
+            success: function () {
 
                 addPromptMessage("Command added successfully.");
                 reloadCommands();
@@ -179,7 +180,7 @@
 
     function sendCommand(commandId) { 
 
-     addPromptMessage("@Model.IsKillSwitchActive")
+        addPromptMessage("@Model.IsKillSwitchActive");
 
         if ('@Model.IsKillSwitchActive' === 'True') {
             addPromptMessage("Kill switch is currently active, all interactions are disabled.");
@@ -192,7 +193,7 @@
             data: { 
                 id: commandId 
             },
-            success: function (response) {
+            success: function () {
                 
                 addPromptMessage("Command with id #" + commandId + " was sent successfully.");
             },
@@ -211,36 +212,42 @@
     }
 
     function addPromptMessage(message) {
+
         var currentTime = '[@DateTime.Now.ToString("HH:mm:ss")]';
         var capitalizedMessage = message.charAt(0).toUpperCase() + message.slice(1);
         var promptMessage = currentTime + " " + "@Model.PromptName" + "> " +  capitalizedMessage;
         $('.p-container').append('<span class="prompt"> ' + promptMessage + '</span>');
     }
 
-    $(document).ready(function() {
+    function addCommandFormSubmitEventHandler() {
+        
         $('#commandForm').submit(function(event) {
-                event.preventDefault();
 
-                if ('@Model.IsKillSwitchActive' === 'True') {
-                    addPromptMessage("Kill switch is currently active, all interactions are disabled.");
-                    return;
-                }
+            event.preventDefault();
 
-                var name = $('#nameInput').val();
-                var description = $('#descriptionInput').val();
-                var payload = $('#payloadInput').val();
-                console.log(name, description, payload);
-
-                addCommand(name, description, payload);
+            if ('@Model.IsKillSwitchActive' === 'True') {
+                addPromptMessage("Kill switch is currently active, all interactions are disabled.");
+                return;
             }
-        ); 
 
+            var name = $('#nameInput').val();
+            var description = $('#descriptionInput').val();
+            var payload = $('#payloadInput').val();
+            console.log(name, description, payload);
+
+            addCommand(name, description, payload);
+        }); 
+    }
+
+    $(document).ready(function() {
+
+        addCommandFormSubmitEventHandler();
         reloadCommands();
+        addPromptMessage("Is killswitch on: " + '@Model.IsKillSwitchActive')
     });
 </script>
 
 <style>
-    
     .submit-container {
         width: 100%;
         height: 3.5em;
@@ -311,12 +318,8 @@
         padding-right: 0.5em;
     }
 
-    .mutate-btn-section{
-        display: block ruby;
-        text-align: end;
-        margin-top: -0.3em;
-    }
 
+    /* Todo: figure out if can be deleted, then streamline naming across the board. */
     .send-btn-container {
         display: flex;
         flex-direction: column;
@@ -325,7 +328,7 @@
 
     .btn-section {
         display: grid;
-        padding-right: 0px;
+        padding-right: 1.25em;
     }
 
     .command-name {
@@ -357,23 +360,6 @@
     .command-payload:hover {
         color: #81C784; 
         cursor: pointer;
-    }
-
-    .send-btn {
-        background: linear-gradient(to right, #0088CC, #0044CC);
-        color: #FFFFFF;
-        border: none;
-        padding: 8px 10px;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        width: 70%;
-        height: 2.5em;
-        text-align: center;
-        position: relative;
-        right: -2.5em;
-        bottom: -0.3em;
-        min-width: 65px;
     }
 
     .send-btn:hover {
@@ -432,6 +418,7 @@
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         padding: 15px;
         max-width: 45%;
+        min-width: 25em;
     }
 
     .c-container {

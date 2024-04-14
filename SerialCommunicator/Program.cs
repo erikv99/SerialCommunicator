@@ -43,31 +43,41 @@ try
 
     await _configureDatabaseAsync(app);
 
-    //await Electron.WindowManager.CreateWindowAsync(app.Urls.FirstOrDefault());
-    ElectronBootstrapAsync();
+    await ElectronBootstrapAsync();
 }
 catch (Exception ex)
 {
-    // Log the exception
-    Console.WriteLine($"An error occurred: {ex.Message}");
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogCritical(ex, "An error occurred: {Message}", ex.Message);
 }
 
 app.WaitForShutdown();
 
-async void ElectronBootstrapAsync()
+async Task ElectronBootstrapAsync()
 {
     BrowserWindowOptions options = new BrowserWindowOptions
     {
         Show = false,
-
+        WebPreferences = new WebPreferences
+        {
+            NodeIntegration = true,
+        },
     };
 
     BrowserWindow mainWindow = await Electron.WindowManager.CreateWindowAsync(options);
+
+    mainWindow.OnClosed += Electron.App.Quit;
 
     mainWindow.OnReadyToShow += () =>
     {
         mainWindow.Show();
         mainWindow.SetTitle("SerialCommunicator");
+
+        if (app == null) 
+        {
+            Console.WriteLine("App is null.");
+           return;
+        }
 
         if (app.Environment.IsDevelopment())
         {
