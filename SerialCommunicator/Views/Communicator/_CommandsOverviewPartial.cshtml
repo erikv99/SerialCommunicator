@@ -3,15 +3,9 @@
 @foreach (var command in Model)
 {
     <div class="container-fluid command-container">
+
         <div class="row">
-            <div class="col-md-8">
-                <div class="command-row command-name">@command.Name</div>
-                <div class="command-row command-description">@command.Description</div>
-                <div class="command-row command-payload">@command.GetPayloadAsString()</div>
-            </div>
-            
-            <div class="col-md-4 btn-section">
-                
+            <div class="col-md-12 btn-section minus-margin">
                 <div class="row col-md-12 mutate-btn-section">
                     <button class="mutate-btn" onclick="editCommand('@command.Id');">
                         <i class="fa-solid fa-gear"></i>
@@ -19,27 +13,40 @@
                     <button class="mutate-btn" onclick="deleteCommand('@command.Id');">
                         <i class="fa-solid fa-trash"></i>
                     </button>
-                        <button class="new-send-btn" onclick="sendCommand('@command.Id');">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="command-row command-name">@command.Name</div>
+                <div class="command-row command-description">@command.Description</div>
+                <div class="command-row command-payload">@command.GetPayloadAsString()</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 btn-section">
+                <div class="row col-md-12 mutate-btn-section">
+                    <button id="send-btn" class="mutate-btn" onclick="sendCommand('@command.Id');">
                         Send <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
             </div>
         </div>
+
     </div>
 }
 
 <style>
-    .new-send-btn {
-        position: relative;
-        bottom: -3em;
+    
+    .minus-margin {
+        margin-bottom: -1.5em;
+    }
+
+    #send-btn {
         width: 5em;
-        padding: 4px 8px;
-        background: linear-gradient(to right, #08C, #6A3E06);
-        color: #FFFFFF;
-        border: none;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+        margin-top: 1em;
     }
 
     .mutate-btn-section {
