@@ -19,7 +19,7 @@
                     <button class="mutate-btn" onclick="deleteCommand('@command.Id');">
                         <i class="fa-solid fa-trash"></i>
                     </button>
-                        <button class="mutate-btn" style="width: 5em;" onclick="sendCommand('@command.Id');">
+                        <button class="new-send-btn" onclick="sendCommand('@command.Id');">
                         Send <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
@@ -27,3 +27,24 @@
         </div>
     </div>
 }
+
+<style>
+    .new-send-btn {
+        position: relative;
+        bottom: -3em;
+        width: 5em;
+        padding: 4px 8px;
+        background: linear-gradient(to right, #08C, #6A3E06);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+    }
+
+    .mutate-btn-section {
+        display: block;
+        text-align: end;
+        margin-top: -0.3em;
+    }
+</style>

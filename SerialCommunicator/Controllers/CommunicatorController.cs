@@ -80,7 +80,7 @@ public class CommunicatorController : Controller
             await _dbContext.Commands.AddAsync(command);
             await _dbContext.SaveChangesAsync();
 
-            return Json(new { success = true });
+            return Ok();
         }
         catch (Exception ex)
         {
@@ -129,7 +129,12 @@ public class CommunicatorController : Controller
 
         var result = _serialCommunicatorService.SendCommand(command);
 
-        return Json(new { success = true, response = result });
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return Ok();
     }
 
     private async Task<List<Command>> _loadCommandsAsync()
