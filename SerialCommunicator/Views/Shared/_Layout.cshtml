@@ -7,7 +7,6 @@
     <meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; img-src * data:; connect-src *; frame-src *;">
     <title>@ViewData["Title"]</title>
     <script>
-        window.nodeRequire = require;
         delete window.require;
         delete window.exports; delete window.module;
     </script>
@@ -25,7 +24,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1" style="display: flex; gap: 10px;">
                         <li class="nav-item">
                             <a class="nav-link nav-item" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-house"></i> Home</a>
@@ -34,7 +33,7 @@
                             <a class="nav-link nav-item" asp-area="" asp-controller="Communicator" asp-action="Index"><i class="fa-solid fa-satellite-dish"></i> Communicator</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link nav-item" asp-area="" asp-controller="Settings" asp-action="Index"><i class="fa-solid fa-info"></i> Info</a>
+                            <a class="nav-link nav-item" asp-area="" asp-controller="Settings" asp-action="Index"><i class="fa-solid fa-info"></i> Settings</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link nav-item" asp-area="" asp-controller="Home" asp-action="Privacy"><i class="fa-solid fa-user-shield"></i> Privacy</a>
@@ -44,6 +43,7 @@
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -55,6 +55,7 @@
             &copy; 2024 - SerialCommunicator - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/969d13854d.js" crossorigin="anonymous"></script>

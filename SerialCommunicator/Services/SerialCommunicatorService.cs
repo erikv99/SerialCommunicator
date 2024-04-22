@@ -23,7 +23,7 @@ public class SerialCommunicatorService
     /// <param name="command">The command to send.</param>
     /// <returns>True if the command was sent successfully; otherwise, false.</returns>
     [HttpPost]
-    public async Task<bool> SendCommand(Command command)
+    public async Task<bool> SendCommandAsync(Command command)
     {
         _logger.LogInformation("Attempting to send the {CommandName} command.", command.Name);
         _logger.LogInformation("Payload: {Payload} command.", BitConverter.ToString(command.Payload));

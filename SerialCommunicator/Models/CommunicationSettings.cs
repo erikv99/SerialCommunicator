@@ -5,7 +5,7 @@ namespace SerialCommunicator.Models;
 public class CommunicationSettings
 {
     public int? Id { get; set; }
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
     public string PortName { get; set; } = "COM1";
     public int BaudRate { get; set; } = 9600;
     public Parity Parity { get; set; } = Parity.None;
@@ -14,4 +14,5 @@ public class CommunicationSettings
     public Handshake Handshake { get; set; } = Handshake.None;
     public int ReadTimeout { get; set; } = 500;
     public int WriteTimeout { get; set; } = 500;
+    public bool RtsEnable { get; set; } = false;
 }

@@ -1,4 +1,5 @@
-﻿@model SettingsVm
+﻿@using System.IO.Ports
+@model SettingsVm
 
 @{
     ViewData["Title"] = "Settings";
@@ -6,49 +7,76 @@
 
 <div class="bg-zinc-900 text-white min-h-screen flex flex-col items-center justify-center">
     <h1 class="text-3xl font-bold mb-8">Settings</h1>
-    <div class="bg-zinc-800 p-4 rounded-lg w-full max-w-md">
+    <div class="bg-zinc-800 p-4 rounded-lg w-half">
         <form method="post" asp-controller="Settings" asp-action="Save">
-            <div class="flex items-center justify-between mb-4">
-                <label for="portName" class="mr-2">Port Name:</label>
-                <input type="text" id="portName" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.PortName" name="PortName">
+            @Html.AntiForgeryToken()
+
+            <div class="flex">
+                <div class="mb-4 mr-4">
+                    <label for="portName" class="block text-sm font-medium mb-1">Port Name:</label>
+                    <input type="text" id="portName" class="bg-zinc-700 text-white p-2 rounded focus:outline-none w-half" value="@Model.Settings.PortName" name="PortName">
+                </div>
+
+                <div class="mb-4">
+                    <label for="baudRate" class="block text-sm font-medium mb-1">Baud Rate:</label>
+                    <input type="number" id="baudRate" class="bg-zinc-700 text-white p-2 rounded focus:outline-none w-half" value="@Model.Settings.BaudRate" name="BaudRate">
+                </div>
             </div>
-            <div class="flex items-center justify-between mb-4">
-                <label for="baudRate" class="mr-2">Baud Rate:</label>
-                <input type="number" id="baudRate" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.BaudRate" name="BaudRate">
+
+
+            <div class="flex">
+                <div class="mb-4 mr-4">
+                    <label for="stopBits" class="block text-sm font-medium mb-1">Stop Bits:</label>
+                    <input type="number" id="stopBits" class="bg-zinc-700 text-white p-2 rounded focus:outline-none w-half" value="@Model.Settings.StopBits" name="StopBits">
+                </div>
+                <div class="mb-4">
+                    <label for="dataBits" class="block text-sm font-medium mb-1">Data Bits:</label>
+                    <input type="number" id="dataBits" class="bg-zinc-700 text-white p-2 rounded focus:outline-none w-half" value="@Model.Settings.DataBits" name="DataBits">
+                </div>
             </div>
-            <div class="flex items-center justify-between mb-4">
-                <label for="parity" class="mr-2">Parity:</label>
-                <select id="parity" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" name="Parity">
-                    <option value="None" selected>None</option>
-                    <option value="Even">Even</option>
-                    <option value="Odd">Odd</option>
-                </select>
+
+            <div class="flex">
+                <div class="mb-4 mr-4" style="width: 50%">
+                    <label for="parity" class="block text-sm font-medium mb-1">Parity:</label>
+                    @Html.DropDownListFor(model => model.Settings.Parity, new SelectList(Enum.GetValues(typeof(Parity))), new 
+                    { 
+                        @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-half", 
+                        @id = "parity",
+                    })
+                </div>
+                <div class="mb-4" style="width: 50%">
+                    <label for="handshake" class="block text-sm font-medium mb-1">Handshake:</label>
+                    @Html.DropDownListFor(model => model.Settings.Handshake, new SelectList(Enum.GetValues(typeof(Handshake))), new
+                        {
+                            @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-half",
+                            @id = "handshake",
+                        })
+                </div>
             </div>
-            <div class="flex items-center justify-between mb-4">
-                <label for="dataBits" class="mr-2">Data Bits:</label>
-                <input type="number" id="dataBits" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.DataBits" name="DataBits">
+
+            <div class="flex">
+                <div class="mb-4 mr-4">
+                    <label for="readTimeout" class="block text-sm font-medium mb-1">Read Timeout:</label>
+                    <input type="number" id="readTimeout" class="bg-zinc-700 text-white p-2 rounded focus:outline-none w-half" value="@Model.Settings.ReadTimeout" name="ReadTimeout">
+                </div>
+                <div class="mb-4">
+                    <label for="writeTimout" class="block text-sm font-medium mb-1">Write Timeout:</label>
+                    <input type="number" id="writeTimout" class="bg-zinc-700 text-white p-2 rounded focus:outline-none w-half" value="@Model.Settings.WriteTimeout" name="WriteTimeout">
+                </div>
             </div>
-            <div class="flex items-center justify-between mb-4">
-                <label for="stopBits" class="mr-2">Stop Bits:</label>
-                <input type="number" id="stopBits" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.StopBits" name="StopBits">
+
+            <div class="flex">
+                <div class="mb-4 mr-4">
+                    <label for="writeTimout" class="block text-sm font-medium mb-1">Write Timeout:</label>
+                    <input type="number" id="writeTimout" class="bg-zinc-700 text-white p-2 rounded focus:outline-none w-half" value="@Model.Settings.WriteTimeout" name="WriteTimeout">
+                </div>
             </div>
-            <div class="flex items-center justify-between mb-4">
-                <label for="handshake" class="mr-2">Handshake:</label>
-                <select id="handshake" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" name="Handshake">
-                    <option value="None" selected>None</option>
-                    <option value="XOnXOff">XOnXOff</option>
-                    <option value="RequestToSend">RequestToSend</option>
-                </select>
+
+            <div class="mb-4">
+
             </div>
-            <div class="flex items-center justify-between mb-4">
-                <label for="readTimeout" class="mr-2">Read Timeout:</label>
-                <input type="number" id="readTimeout" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.ReadTimeout" name="ReadTimeout">
-            </div>
-            <div class="flex items-center justify-between mb-4">
-                <label for="writeTimeout" class="mr-2">Write Timeout:</label>
-                <input type="number" id="writeTimeout" class="bg-zinc-700 text-white p-2 rounded focus:outline-none flex-1" value="@Model.WriteTimeout" name="WriteTimeout">
-            </div>
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save</button>
+
         </form>
     </div>
 </div>
+
