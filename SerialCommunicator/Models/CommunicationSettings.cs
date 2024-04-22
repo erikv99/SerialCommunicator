@@ -10,7 +10,7 @@ public class CommunicationSettings
     public int BaudRate { get; set; } = 9600;
     public Parity Parity { get; set; } = Parity.None;
     public int DataBits { get; set; } = 8;
-    public int StopBits { get; set; } = 1;
+    public StopBits StopBits { get; set; } = StopBits.One;
     public Handshake Handshake { get; set; } = Handshake.None;
     public int ReadTimeout { get; set; } = 500;
     public int WriteTimeout { get; set; } = 500;
