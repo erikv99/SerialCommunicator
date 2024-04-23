@@ -19,10 +19,7 @@ namespace SerialCommunicator.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = new SettingsVm
-            {
-                Settings = new CommunicationSettings()
-            };
+            var settings = new CommunicationSettings();
 
             try 
             {
@@ -33,9 +30,7 @@ namespace SerialCommunicator.Controllers
 
                     if (dbSettings != null)
                     {
-                        model.Settings = dbSettings;
-                        _dbContext.CommunicationSettings.Add(dbSettings);
-                        await _dbContext.SaveChangesAsync();
+                        settings = dbSettings;
                     }
                 }
                 else 
@@ -49,18 +44,34 @@ namespace SerialCommunicator.Controllers
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return View(model);
+            return View(settings);
         }
 
-        // Maybe
-        // [HttpPost]
-        // public IActionResult Save(CommunicationSettings settings)
-        // {
-        //     if (!ModelState.IsValid)
-        //     {
-        //         // TODO Add message
-        //         return View("Index", settings);
-        //     }
-        // }
+        [HttpPost]
+        public async Task<IActionResult> Save(CommunicationSettings model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid model state.");
+                return View(model);
+            }
+
+            // Todo: improve error handling
+
+            try
+            {
+                _dbContext.CommunicationSettings.Add(model);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while saving the communication settings.");
+                ModelState.AddModelError(string.Empty, "An error occurred while saving the communication settings.");
+                return View(model);
+            }
+
+            TempData["SuccessMessage"] = "Settings saved successfully.";
+            return RedirectToAction("Index");
+        }
     }
 }
