@@ -6,94 +6,97 @@
 }
 
 
-<div class="text-white min-h-screen flex flex-col items-center justify-center">
-    <h1 class="text-3xl font-bold mb-8">Settings</h1>
+<div class="text-white min-h-screen flex flex-col items-center" style="padding-top: 3em;">
+    <h1 class="text-3xl font-bold mb-8 gradient-text-purple-blue" style="line-height: 2em; margin-bottom: 1em;">Settings</h1>
     <div class="p-4 rounded-lg w-half" style="background-color: #322f357d;">
-        <form method="post" asp-controller="Settings" asp-action="Save">
+        <form asp-controller="Settings" asp-action="Save" method="post">
+
+            @Html.HiddenFor(model => model.Id)
 
             <div class="flex">
                 <div class="mb-4 mr-4">
-                    @Html.LabelFor(model => model.PortName, htmlAttributes: new { @class = "block text-sm font-medium mb-1" })
+                    @* todo: Clean up this css. (csmess) *@
+                    @Html.LabelFor(model => model.PortName, htmlAttributes: new { @class = "block text-sm font-medium mb-1 gradient-text-purple-blue" })
                     @Html.TextBox("PortName", Model.PortName, new { @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-half", id = "portName" })
                     @Html.ValidationMessageFor(model => model.PortName, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="mb-4">
-                    @Html.LabelFor(model => model.BaudRate, htmlAttributes: new { @class = "block text-sm font-medium mb-1" })
+                    @Html.LabelFor(model => model.BaudRate, htmlAttributes: new { @class = "block text-sm font-medium mb-1 gradient-text-purple-blue" })
                     @Html.EditorFor(model => model.BaudRate, new { htmlAttributes = new { @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-half" } })
                     @Html.ValidationMessageFor(model => model.BaudRate, "", new { @class = "text-danger" })
                 </div>
             </div>
 
             <div class="flex">
-                <div class="mb-4 mr-4">
-                    @Html.LabelFor(model => model.StopBits, htmlAttributes: new { @class = "block text-sm font-medium mb-1" })
-                    @Html.TextBox("StopBits", Model.StopBits, new { @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-half", id = "stopBits" })
-                    @Html.ValidationMessageFor(model => model.PortName, "", new { @class = "text-danger" })
+                <div class="mb-4 mr-4" style="width: 50%">
+                    @Html.LabelFor(model => model.StopBits, htmlAttributes: new { @class = "block text-sm font-medium mb-1 gradient-text-purple-blue" })
+                    @Html.DropDownListFor(model => model.StopBits, new SelectList(Enum.GetValues(typeof(StopBits))), new
+                    {
+                        @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-full",
+                        @id = "stopBits",
+                    })
+                    @Html.ValidationMessageFor(model => model.StopBits, "", new { @class = "text-danger" })
                 </div>
                 <div class="mb-4">
-                    @Html.LabelFor(model => model.DataBits, htmlAttributes: new { @class = "block text-sm font-medium mb-1" })
+                    @Html.LabelFor(model => model.DataBits, htmlAttributes: new { @class = "block text-sm font-medium mb-1 gradient-text-purple-blue" })
                     @Html.TextBox("DataBits", Model.DataBits, new { @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-half", id = "dataBits" })
-                    @Html.ValidationMessageFor(model => model.PortName, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.DataBits, "", new { @class = "text-danger" })
                 </div>
             </div>
 
             <div class="flex">
                 <div class="mb-4 mr-4" style="width: 50%">
-                    @Html.LabelFor(model => model.Parity, htmlAttributes: new { @class = "block text-sm font-medium mb-1" })
+                    @Html.LabelFor(model => model.Parity, htmlAttributes: new { @class = "block text-sm font-medium mb-1 gradient-text-purple-blue" })
                     @Html.DropDownListFor(model => model.Parity, new SelectList(Enum.GetValues(typeof(Parity))), new
                     {
                         @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-full",
                         @id = "parity",
                     })
-                    @Html.ValidationMessageFor(model => model.PortName, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.Parity, "", new { @class = "text-danger" })
                 </div>
                 <div class="mb-4" style="width: 50%">
-                    @Html.LabelFor(model => model.Handshake, htmlAttributes: new { @class = "block text-sm font-medium mb-1" })
+                    @Html.LabelFor(model => model.Handshake, htmlAttributes: new { @class = "block text-sm font-medium mb-1 gradient-text-purple-blue" })
                     @Html.DropDownListFor(model => model.Handshake, new SelectList(Enum.GetValues(typeof(Handshake))), new
                     {
                         @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-full",
                         @id = "handshake",
                     })
-                    @Html.ValidationMessageFor(model => model.PortName, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.Handshake, "", new { @class = "text-danger" })
                 </div>
             </div>
 
             <div class="flex">
                 <div class="mb-4 mr-4">
-                    @Html.LabelFor(model => model.ReadTimeout, htmlAttributes: new { @class = "block text-sm font-medium mb-1" })
+                    @Html.LabelFor(model => model.ReadTimeout, htmlAttributes: new { @class = "block text-sm font-medium mb-1 gradient-text-purple-blue" })
                     @Html.TextBox("ReadTimeout", Model.ReadTimeout, new { @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-half", id = "readTimeout" })
-                    @Html.ValidationMessageFor(model => model.PortName, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.ReadTimeout, "", new { @class = "text-danger" })
                 </div>
                 <div class="mb-4">
-                    @Html.LabelFor(model => model.WriteTimeout, htmlAttributes: new { @class = "block text-sm font-medium mb-1" })
+                    @Html.LabelFor(model => model.WriteTimeout, htmlAttributes: new { @class = "block text-sm font-medium mb-1 gradient-text-purple-blue" })
                     @Html.TextBox("WriteTimeout", Model.WriteTimeout, new { @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-half", id = "writeTimeout" })
-                    @Html.ValidationMessageFor(model => model.PortName, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.WriteTimeout, "", new { @class = "text-danger" })
                 </div>
             </div>
 
             <div class="flex">
                 <div class="mb-4 mr-4">
-                    @Html.LabelFor(model => model.RtsEnable, htmlAttributes: new { @class = "block text-sm font-medium mb-1", @style = "float: left;margin-right: 1em;"})
-                    @Html.CheckBox("RtsEnabled", Model.RtsEnable, new { @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-half", id = "rtsEnabled" })
-                    @Html.ValidationMessageFor(model => model.PortName, "", new { @class = "text-danger" })
+                    @Html.LabelFor(model => model.RtsEnable, htmlAttributes: new { @class = "block text-sm font-medium mb-1 gradient-text-purple-blue", @style = "float: left;margin-right: 1em;"})
+                    @Html.CheckBox("RtsEnable", Model.RtsEnable, new { @class = "bg-zinc-700 text-white p-2 rounded focus:outline-none w-half", id = "rtsEnable" })
+                    @Html.ValidationMessageFor(model => model.RtsEnable, "", new { @class = "text-danger" })
                 </div>
             </div>
 
             <div class="btn-container">
-                <a class="a-button" type="submit" style="--color: #6eff3e;">
+                <button class="a-button" type="submit" style="--color: #6eff3e;">
                     <span></span>
                     <span></span>
                     <span></span>
                     <span></span>
                     Save
-                </a>
+                </button>
             </div>
         </form>
-
-        <div class="alert alert-success">
-            Mooi man de hele tering bende werkt
-        </div>
 
         @if (TempData["SuccessMessage"] != null)
         {

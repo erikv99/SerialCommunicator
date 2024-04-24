@@ -60,8 +60,7 @@ namespace SerialCommunicator.Controllers
 
             try
             {
-                _dbContext.CommunicationSettings.Add(model);
-                await _dbContext.SaveChangesAsync();
+                await _saveAsync(model);
             }
             catch (Exception e)
             {
@@ -72,6 +71,22 @@ namespace SerialCommunicator.Controllers
 
             TempData["SuccessMessage"] = "Settings saved successfully.";
             return RedirectToAction("Index");
+        }
+
+        private async Task _saveAsync(CommunicationSettings model)
+        {
+            var existingSettings = await _dbContext.CommunicationSettings.FindAsync(model.Id);
+
+            if (existingSettings != null)
+            {
+                _dbContext.Entry(existingSettings).CurrentValues.SetValues(model);
+            }
+            else
+            {
+                _dbContext.CommunicationSettings.Add(model);
+            }
+            
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

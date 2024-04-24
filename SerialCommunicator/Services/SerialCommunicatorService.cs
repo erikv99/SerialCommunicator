@@ -1,7 +1,6 @@
 using System.IO.Ports;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using SerialCommunicator.Models;
 
 public class SerialCommunicatorService
@@ -27,9 +26,9 @@ public class SerialCommunicatorService
     {
         _logger.LogInformation("Attempting to send the {CommandName} command.", command.Name);
         _logger.LogInformation("Payload: {Payload} command.", BitConverter.ToString(command.Payload));
+
         SerialPort? port = null;
         var result = false;
-
         var _serialPortOptions = await _loadCommunicationSettingsAsync();
 
         try
@@ -69,13 +68,10 @@ public class SerialCommunicatorService
         var activeSettings = await _dbContext.CommunicationSettings
             .FirstOrDefaultAsync(s => s.IsActive);
 
-        activeSettings ??= new CommunicationSettings
+        if (activeSettings == null) 
         {
-            IsActive = true
-        };
-        
-        _dbContext.CommunicationSettings.Add(activeSettings);
-        await _dbContext.SaveChangesAsync();
+            throw new NullReferenceException("Active settings is null in DB when it should not be.");
+        }
 
         return activeSettings!;
     }

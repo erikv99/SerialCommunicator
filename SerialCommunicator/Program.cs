@@ -117,32 +117,31 @@ void _configureServices(IServiceCollection services)
 /// <returns>A task representing the asynchronous operation.</returns>
 async Task _configureDatabaseAsync(WebApplication app)
 {
-    using (var scope = app.Services.CreateScope())
+    using var scope = app.Services.CreateScope();
+    var serviceProvider = scope.ServiceProvider;
+    var dbContext = serviceProvider.GetRequiredService<MainDbContext>();
+    var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+
+    logger.LogInformation("Configuring the database...");
+
+    await dbContext.Database.MigrateAsync();
+
+    if (!dbContext.CommunicationSettings.Any())
     {
-        var serviceProvider = scope.ServiceProvider;
-        var dbContext = serviceProvider.GetRequiredService<MainDbContext>();
-        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+        dbContext.CommunicationSettings.Add(new CommunicationSettings());
+        await dbContext.SaveChangesAsync();
+        logger.LogInformation("Communication settings added to the database.");
+    }
 
-        logger.LogInformation("Configuring the database...");
+    if (!dbContext.Commands.Any())
+    {
+        var commandOptions = serviceProvider.GetRequiredService<IOptions<CommandOptions>>().Value;
 
-        await dbContext.Database.MigrateAsync();
-
-        if (!dbContext.CommunicationSettings.Any()) 
+        if (commandOptions?.Commands != null)
         {
-            
-        }
-
-
-        if (!dbContext.Commands.Any())
-        {
-            var commandOptions = serviceProvider.GetRequiredService<IOptions<CommandOptions>>().Value;
-
-            if (commandOptions?.Commands != null)
-            {
-                dbContext.Commands.AddRange(entities: commandOptions.Commands);
-                await dbContext.SaveChangesAsync();
-                logger.LogInformation("Commands added to the database.");
-            }
+            dbContext.Commands.AddRange(entities: commandOptions.Commands);
+            await dbContext.SaveChangesAsync();
+            logger.LogInformation("Commands added to the database.");
         }
     }
 }

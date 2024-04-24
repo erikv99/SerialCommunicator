@@ -19,7 +19,9 @@ namespace SerialCommunicator.Services
             return await _getRemoteKillSwitchStatusAsync("https://raw.githubusercontent.com/erikv99/data/main/r_ks_00.txt");
         }
 
+
         private async Task<bool> _getRemoteKillSwitchStatusAsync(string url)
+
         {
             try
             {
