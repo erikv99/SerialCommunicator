@@ -113,7 +113,7 @@ public class CommunicatorController : Controller
     }
 
     [HttpPost]
-    public IActionResult SendCommand(int id) 
+    public async Task<IActionResult> SendCommand(int id) 
     {
         if (_isKillSwitchActive)
         {
@@ -127,7 +127,7 @@ public class CommunicatorController : Controller
             return NotFound();
         }
 
-        var result = _serialCommunicatorService.SendCommand(command);
+        var result = await _serialCommunicatorService.SendCommandAsync(command);
 
         if (!result)
         {

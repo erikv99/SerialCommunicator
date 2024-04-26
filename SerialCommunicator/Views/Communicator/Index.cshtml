@@ -81,7 +81,6 @@
                 var commandsContainer = $("#commands-container")
                 commandsContainer.empty();
                 
-                console.log("Response: ");
                 console.log(response);
 
                 setTimeout(function() {
@@ -180,8 +179,6 @@
 
     function sendCommand(commandId) { 
 
-        addPromptMessage("@Model.IsKillSwitchActive");
-
         if ('@Model.IsKillSwitchActive' === 'True') {
             addPromptMessage("Kill switch is currently active, all interactions are disabled.");
             return;
@@ -243,7 +240,6 @@
 
         addCommandFormSubmitEventHandler();
         reloadCommands();
-        addPromptMessage("Is killswitch on: " + '@Model.IsKillSwitchActive')
     });
 </script>
 
@@ -251,7 +247,7 @@
 @* TODO: Clean up this CSS mess. *@
 <style>
     body {
-        font-family: 'Consolas', monospace;
+        font-family: 'Poppins', sans-serif;
         font-size: 1em;
         background-color: #1C1C1C; 
         color: #FFFFFF;
@@ -352,7 +348,7 @@
     }
 
     .command-payload {
-        font-family: 'Courier New', monospace;
+        font-family: 'Poppins', sans-serif;
         margin-top: 4px;
         color: #8990FF;
         font-size: 0.7em;
@@ -393,7 +389,7 @@
         background-color: #0F0F0F;
         width: 100%;
         display: block;
-        font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+        font-family: 'Poppins', sans-serif;
         font-size: 12px;
     }
 
@@ -402,7 +398,7 @@
         background-color: #0F0F0F;
         border: none;
         outline: none;
-        font-family: Consolas, monospace;
+        font-family: 'Poppins', sans-serif;
     }
 
     .main-container {
