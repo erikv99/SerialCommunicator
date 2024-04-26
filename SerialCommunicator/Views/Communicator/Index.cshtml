@@ -202,7 +202,8 @@
                 } 
                 else {
                 
-                    addPromptMessage("Failed to send command with id #" + commandId + ".");
+                    // todo: add info to response and give error message accordingly.
+                    addPromptMessage("Failed to send command with id #" + commandId + ", consider checking settings.");
                 }
             }
         });
@@ -240,7 +241,6 @@
 
         addCommandFormSubmitEventHandler();
         reloadCommands();
-        addPromptMessage("Is killswitch on: " + '@Model.IsKillSwitchActive')
     });
 </script>
 
