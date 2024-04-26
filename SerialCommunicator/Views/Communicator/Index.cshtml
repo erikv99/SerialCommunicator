@@ -67,7 +67,7 @@
 </div>
 
 <script>
-    function reloadCommands() {
+        function reloadCommands() {
 
         if ('@Model.IsKillSwitchActive' === 'True') {
             return;
@@ -81,7 +81,6 @@
                 var commandsContainer = $("#commands-container")
                 commandsContainer.empty();
                 
-                console.log("Response: ");
                 console.log(response);
 
                 setTimeout(function() {
@@ -180,8 +179,6 @@
 
     function sendCommand(commandId) { 
 
-        addPromptMessage("@Model.IsKillSwitchActive");
-
         if ('@Model.IsKillSwitchActive' === 'True') {
             addPromptMessage("Kill switch is currently active, all interactions are disabled.");
             return;
@@ -247,7 +244,16 @@
     });
 </script>
 
+
+@* TODO: Clean up this CSS mess. *@
 <style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1em;
+        background-color: #1C1C1C; 
+        color: #FFFFFF;
+    }
+
     .submit-container {
         width: 100%;
         height: 3.5em;
@@ -318,17 +324,10 @@
         padding-right: 0.5em;
     }
 
-
-    /* Todo: figure out if can be deleted, then streamline naming across the board. */
-    .send-btn-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-    }
-
     .btn-section {
         display: grid;
-        padding-right: 1.25em;
+        padding-right: 0em;
+
     }
 
     .command-name {
@@ -351,7 +350,7 @@
     }
 
     .command-payload {
-        font-family: 'Courier New', monospace;
+        font-family: 'Poppins', sans-serif;
         margin-top: 4px;
         color: #8990FF;
         font-size: 0.7em;
@@ -392,7 +391,7 @@
         background-color: #0F0F0F;
         width: 100%;
         display: block;
-        font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+        font-family: 'Poppins', sans-serif;
         font-size: 12px;
     }
 
@@ -401,7 +400,7 @@
         background-color: #0F0F0F;
         border: none;
         outline: none;
-        font-family: Consolas, monospace;
+        font-family: 'Poppins', sans-serif;
     }
 
     .main-container {
@@ -433,26 +432,5 @@
         max-height: 0vh; 
         overflow-y: auto;
         @* TODO: No clue why this works, but it does, investigate later. *@
-    }
-
-    .width-100 {
-        width: 100%;
-    }
-
-
-    .prompt-container {
-        flex: 1;
-        display: flex;
-        gap: 10px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        min-height: 25em;
-    }
-
-    body {
-        font-family: 'Consolas', monospace;
-        font-size: 1em;
-        background-color: #1C1C1C; 
-        color: #FFFFFF;
     }
 </style>

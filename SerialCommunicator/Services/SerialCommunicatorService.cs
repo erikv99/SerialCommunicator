@@ -1,18 +1,18 @@
 using System.IO.Ports;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 using SerialCommunicator.Models;
 
 public class SerialCommunicatorService
 {
-    private readonly SerialPortOptions _serialPortOptions;
+    private readonly MainDbContext _dbContext;
     private readonly ILogger<SerialCommunicatorService> _logger;
 
     public SerialCommunicatorService(
-        IOptions<SerialPortOptions> serialPortOptions,
+        MainDbContext dbContext,
         ILogger<SerialCommunicatorService> logger)
     {
-        _serialPortOptions = serialPortOptions.Value;
+        _dbContext = dbContext;
         _logger = logger;
     }
 
@@ -22,12 +22,14 @@ public class SerialCommunicatorService
     /// <param name="command">The command to send.</param>
     /// <returns>True if the command was sent successfully; otherwise, false.</returns>
     [HttpPost]
-    public bool SendCommand(Command command)
+    public async Task<bool> SendCommandAsync(Command command)
     {
         _logger.LogInformation("Attempting to send the {CommandName} command.", command.Name);
         _logger.LogInformation("Payload: {Payload} command.", BitConverter.ToString(command.Payload));
+
         SerialPort? port = null;
         var result = false;
+        var _serialPortOptions = await _loadCommunicationSettingsAsync();
 
         try
         {
@@ -59,5 +61,18 @@ public class SerialCommunicatorService
         }
 
         return result;
+    }
+
+    private async Task<CommunicationSettings> _loadCommunicationSettingsAsync()
+    {
+        var activeSettings = await _dbContext.CommunicationSettings
+            .FirstOrDefaultAsync(s => s.IsActive);
+
+        if (activeSettings == null) 
+        {
+            throw new NullReferenceException("Active settings is null in DB when it should not be.");
+        }
+
+        return activeSettings!;
     }
 }

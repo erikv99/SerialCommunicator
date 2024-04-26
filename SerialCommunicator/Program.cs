@@ -17,10 +17,13 @@ _configureServices(builder.Services);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
+}
+else 
+{
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
@@ -37,19 +40,7 @@ app.MapControllerRoute(
 
 await app.StartAsync();
 
-try
-{
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
-
-    await _configureDatabaseAsync(app);
-
-    await ElectronBootstrapAsync();
-}
-catch (Exception ex)
-{
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
-    logger.LogCritical(ex, "An error occurred: {Message}", ex.Message);
-}
+await _configureDatabaseAsync(app);
 
 app.WaitForShutdown();
 
@@ -88,8 +79,8 @@ async Task ElectronBootstrapAsync()
 
 void _configureServices(IServiceCollection services)
 {
-    services.Configure<CommandOptions>(builder.Configuration.GetSection("Container"));
-    services.Configure<SerialPortOptions>(builder.Configuration.GetSection("SerialPortOptions"));
+    var section = builder.Configuration.GetSection("Container");
+    services.Configure<CommandOptions>(section);
 
     var dataSourcePath = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -103,7 +94,6 @@ void _configureServices(IServiceCollection services)
     services.AddTransient<SerialCommunicatorService>();
     services.AddSingleton<RemoteKillSwitchService>();
 
-    // Add logging
     services.AddLogging(loggingBuilder =>
     {
         loggingBuilder.AddConsole();
@@ -111,33 +101,36 @@ void _configureServices(IServiceCollection services)
     });
 }
 
-/// <summary>
-/// Configures the database for the web application.
-/// </summary>
-/// <param name="app">The web application.</param>
-/// <returns>A task representing the asynchronous operation.</returns>
 async Task _configureDatabaseAsync(WebApplication app)
 {
-    using (var scope = app.Services.CreateScope())
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    logger.LogInformation("Configuring the database...");
+
+    await dbContext.Database.MigrateAsync();
+
+    if (!dbContext.CommunicationSettings.Any())
     {
-        var serviceProvider = scope.ServiceProvider;
-        var dbContext = serviceProvider.GetRequiredService<MainDbContext>();
-        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+        dbContext.CommunicationSettings.Add(new CommunicationSettings());
+        await dbContext.SaveChangesAsync();
+        logger.LogInformation("Communication settings added to the database.");
+    }
 
-        logger.LogInformation("Configuring the database...");
+    if (!dbContext.Commands.Any())
+    {
+        var commandOptions = scope.ServiceProvider.GetRequiredService<IOptions<CommandOptions>>().Value;
 
-        await dbContext.Database.MigrateAsync();
-
-        if (!dbContext.Commands.Any())
+        if (commandOptions?.Commands != null)
         {
-            var commandOptions = serviceProvider.GetRequiredService<IOptions<CommandOptions>>().Value;
-
-            if (commandOptions?.Commands != null)
-            {
-                dbContext.Commands.AddRange(entities: commandOptions.Commands);
-                await dbContext.SaveChangesAsync();
-                logger.LogInformation("Commands added to the database.");
-            }
+            dbContext.Commands.AddRange(entities: commandOptions.Commands);
+            await dbContext.SaveChangesAsync();
+            logger.LogInformation("Commands added to the database.");
+        }
+        else
+        {
+            logger.LogWarning("No commands found in the configuration.");
         }
     }
 }
