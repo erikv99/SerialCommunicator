@@ -240,6 +240,7 @@
 
         addCommandFormSubmitEventHandler();
         reloadCommands();
+        addPromptMessage("Is killswitch on: " + '@Model.IsKillSwitchActive')
     });
 </script>
 
@@ -326,6 +327,7 @@
     .btn-section {
         display: grid;
         padding-right: 0em;
+
     }
 
     .command-name {
