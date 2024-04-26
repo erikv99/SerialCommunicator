@@ -5,7 +5,7 @@
   },
   "name": "SerialCommunicator",
   "author": "",
-  "singleInstance": false,
+  "singleInstance": true,
   "environment": "Development",
   "build": {
     "appId": "com.SerialCommunicator.app", 

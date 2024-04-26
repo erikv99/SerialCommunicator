@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SerialCommunicator.Models;
 
+namespace SerialCommunicator.Services;
+
 public class SerialCommunicatorService
 {
     private readonly MainDbContext _dbContext;
@@ -30,6 +32,7 @@ public class SerialCommunicatorService
         SerialPort? port = null;
         var result = false;
         var _serialPortOptions = await _loadCommunicationSettingsAsync();
+        
 
         try
         {
@@ -38,7 +41,7 @@ public class SerialCommunicatorService
                 PortName = _serialPortOptions.PortName,
                 BaudRate = _serialPortOptions.BaudRate,
                 Parity = _serialPortOptions.Parity,
-                DataBits = _serialPortOptions.DataBits,
+                DataBits = _getValidDatabits(_serialPortOptions),
                 StopBits = _serialPortOptions.StopBits,
                 Handshake = _serialPortOptions.Handshake,
                 RtsEnable = _serialPortOptions.RtsEnable
@@ -54,13 +57,30 @@ public class SerialCommunicatorService
         }
         finally
         {
-            if (port != null && port.IsOpen) 
+            if (port != null && port.IsOpen)
             {
                 port.Close();
             }
         }
 
         return result;
+    }
+
+    // Todo, this is ductape cave man validation. Hoonga boonga.
+    // Requires fixing.
+    private int _getValidDatabits(CommunicationSettings _serialPortOptions)
+    {
+        if (_serialPortOptions.DataBits > 8)
+        {
+            return 8;
+        }
+        
+        if (_serialPortOptions.DataBits < 5)
+        {
+            return 5;
+        }
+
+        return _serialPortOptions.DataBits;
     }
 
     private async Task<CommunicationSettings> _loadCommunicationSettingsAsync()

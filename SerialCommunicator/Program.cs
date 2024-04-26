@@ -38,17 +38,20 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-await app.StartAsync();
 
 await _configureDatabaseAsync(app);
 
+await app.StartAsync();
+
+await _electronBootstrapAsync();
+
 app.WaitForShutdown();
 
-async Task ElectronBootstrapAsync()
+async Task _electronBootstrapAsync()
 {
     BrowserWindowOptions options = new BrowserWindowOptions
     {
-        Show = false,
+        Show = true,
         WebPreferences = new WebPreferences
         {
             NodeIntegration = true,
@@ -57,10 +60,15 @@ async Task ElectronBootstrapAsync()
 
     BrowserWindow mainWindow = await Electron.WindowManager.CreateWindowAsync(options);
 
-    mainWindow.OnClosed += Electron.App.Quit;
+    mainWindow.OnClose += Electron.App.Quit;
+    mainWindow.OnClosed += async () =>
+    {
+        await app.StopAsync();
+    };
 
     mainWindow.OnReadyToShow += () =>
     {
+        mainWindow.Maximize();
         mainWindow.Show();
         mainWindow.SetTitle("SerialCommunicator");
 
@@ -70,10 +78,10 @@ async Task ElectronBootstrapAsync()
            return;
         }
 
-        if (app.Environment.IsDevelopment())
-        {
-            mainWindow.WebContents.OpenDevTools();
-        }
+        //if (app.Environment.IsDevelopment())
+        //{
+        //    mainWindow.WebContents.OpenDevTools();
+        //}
     };
 }
 
