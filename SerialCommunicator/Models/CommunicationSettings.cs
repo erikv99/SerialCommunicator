@@ -22,7 +22,6 @@ public class CommunicationSettings
     public Parity Parity { get; set; } = Parity.None;
 
     [DisplayName("Data Bits")]
-    [Range(5, 8, ErrorMessage = "Data Bits must be between 5 and 8.")]
     public int DataBits { get; set; } = 8;
 
     [DisplayName("Stop Bits")]
@@ -31,10 +30,12 @@ public class CommunicationSettings
     [DisplayName("Handshake")]
     public Handshake Handshake { get; set; } = Handshake.None;
 
+    // TODO: This will most likely result in a crash if validation is breached.
     [DisplayName("Read Timeout")]
     [Range(0, int.MaxValue, ErrorMessage = "Read Timeout must be a non-negative number.")]
     public int ReadTimeout { get; set; } = 500;
 
+    // TODO: This will most likely result in a crash if validation is breached.
     [DisplayName("Write Timeout")]
     [Range(0, int.MaxValue, ErrorMessage = "Write Timeout must be a non-negative number.")]
     public int WriteTimeout { get; set; } = 500;
