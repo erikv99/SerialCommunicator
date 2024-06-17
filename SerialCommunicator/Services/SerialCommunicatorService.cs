@@ -66,21 +66,9 @@ public class SerialCommunicatorService
         return result;
     }
 
-    // Todo, this is ductape cave man validation. Hoonga boonga.
-    // Requires fixing.
     private int _getValidDatabits(CommunicationSettings _serialPortOptions)
     {
-        if (_serialPortOptions.DataBits > 8)
-        {
-            return 8;
-        }
-        
-        if (_serialPortOptions.DataBits < 5)
-        {
-            return 5;
-        }
-
-        return _serialPortOptions.DataBits;
+        return Math.Clamp(_serialPortOptions.DataBits, 5, 8);
     }
 
     private async Task<CommunicationSettings> _loadCommunicationSettingsAsync()
@@ -90,6 +78,7 @@ public class SerialCommunicatorService
 
         if (activeSettings == null) 
         {
+            _logger.LogError("Active settings is null in DB when it should not be.");
             throw new NullReferenceException("Active settings is null in DB when it should not be.");
         }
 

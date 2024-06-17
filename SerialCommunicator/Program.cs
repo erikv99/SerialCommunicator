@@ -4,8 +4,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SerialCommunicator.Models;
 using SerialCommunicator.Services;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.Debug()
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.AddSerilog();
 
 builder.WebHost.UseElectron(args);
 
@@ -101,12 +109,6 @@ void _configureServices(IServiceCollection services)
     services.AddControllersWithViews();
     services.AddTransient<SerialCommunicatorService>();
     services.AddSingleton<RemoteKillSwitchService>();
-
-    services.AddLogging(loggingBuilder =>
-    {
-        loggingBuilder.AddConsole();
-        loggingBuilder.AddDebug();
-    });
 }
 
 async Task _configureDatabaseAsync(WebApplication app)
